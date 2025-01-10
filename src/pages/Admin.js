@@ -28,6 +28,7 @@ function Admin() {
   const AssessmentDetails = lazy(() => import('../components/Admin/AssessmentDetails'));
   const DataRepository = lazy(() => import('../components/Admin/DataRepository'));
   const AdminProfile = lazy(() => import('../components/Admin/AdminProfile'));
+  const AdminMessage = lazy(() => import('../components/Admin/AdminMessage'));
 
   const UserIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
@@ -161,27 +162,13 @@ function Admin() {
           </div>
 
           <div className="flex items-center">
-            <button className="p-3 text-gray-700 hover:text-black transition text-2xl">
+            <button onClick={() => handleSidebarClick("Admin Message")} className="p-3 text-gray-700 hover:text-black transition text-2xl">
               {MessageIcon}
             </button>
-            <div className="profile-circle border bg-white border-black rounded-full w-12 h-12 flex items-center justify-center text-2xl"
-            onClick={toggleDropdown}>
+            <div onClick={() => handleSidebarClick("Profile")} className="profile-circle border bg-white border-black rounded-full w-12 h-12 flex items-center justify-center text-2xl">
             </div>
           </div>
         </div>
-
-        {isDropdownOpen && (
-          <div className="absolute top-16 right-0 mt-2 bg-white border border-gray-300 shadow-lg rounded-md w-40">
-            <ul>
-              <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => alert("Profile clicked")}>
-                Profile
-              </li>
-              <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => alert("Log Out clicked")}>
-                Log Out
-              </li>
-            </ul>
-          </div>
-        )}
 
         {/* Content */}
         <div className="content p-4 flex-1">
@@ -192,6 +179,7 @@ function Admin() {
             {activeSection === "Assessment Details" && <AssessmentDetails handleBackToReview={() => handleSidebarClick("Assessment Review")} />}  
             {activeSection === "Data Repository" && <DataRepository />}
             {activeSection === "Profile" && <AdminProfile />}
+            {activeSection === "Admin Message" && <AdminMessage />}
             {activeSection === "Log Out" && <p>Logging out...</p>}
           </Suspense>
         </div>
