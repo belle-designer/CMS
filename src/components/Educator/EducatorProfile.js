@@ -70,11 +70,11 @@ function EducatorProfile() {
     <div className="mx-auto mt-10 p-6 bg-white shadow-md rounded-lg relative min-h-[650px]">
       <h2 className="text-2xl font-bold mb-6 text-center">Educator Profile</h2>
 
-      {/* Profile Image Section */}
+      {}
       <div className="flex justify-center mb-6">
         <div className="relative w-64 h-64">
           <div className="w-64 h-64 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center">
-            {/* Display profile image if available, otherwise show placeholder */}
+            {}
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
             ) : (
@@ -91,21 +91,21 @@ function EducatorProfile() {
       </div>
 
 
-{/* Profile Name and Email */}
+{}
 <div className="text-center">
   <h1 className="text-3xl font-bold">Mikaela Arciaga</h1>
   <p className="text-gray-600">@mikaelaarciga@gmail.com</p>
 </div>
 
-{/* About Section */}
+{}
 <div className="text-center mt-4">
   <h2 className="text-lg font-semibold">About</h2>
   <p className="text-2xl font-bold" style={{ color: '#0e7529' }}>*</p>
 </div>
-      {/* Bottom Section */}
+      {}
       <div className="flex justify-between items-start mt-4">
-        {/* Left Div (Clickable List) */}
-        <div className="w-1/3 bg-gray-100 p-4 text-center mr-4 h-[250px]"> {/* Fixed height added */}
+        {}
+        <div className="w-1/3 bg-gray-100 p-4 text-center mr-4 h-[250px]"> {}
           <div className="bg-gray-200 p-4 rounded-lg h-full">
             <ul className="space-y-4">
               {['Work', 'Education', 'Place Lived', 'Contacts', 'Basic Information'].map((section) => (
@@ -121,10 +121,10 @@ function EducatorProfile() {
           </div>
         </div>
 
-        {/* Right Div (Rectangle with Information Display) */}
-        <div className="w-2/3 bg-gray-200 p-4 text-center h-[250px]"> {/* Fixed height added */}
-          <div className="bg-gray-300 p-6 rounded-lg h-full relative overflow-y-auto"> {/* Added scrolling */}
-            {/* Edit Icon inside the Rectangle */}
+        {}
+        <div className="w-2/3 bg-gray-200 p-4 text-center h-[250px]"> {}
+          <div className="bg-gray-300 p-6 rounded-lg h-full relative overflow-y-auto"> {}
+            {}
             {selectedSection && (
               <div
                 className="absolute top-2 right-2 cursor-pointer"
@@ -142,7 +142,7 @@ function EducatorProfile() {
               </div>
             )}
 
-            {/* Editable Section */}
+            {}
             {isEditing ? (
               <div>
                 <textarea
@@ -186,7 +186,7 @@ function EducatorProfile() {
         </div>
       </div>
 
-      {/* Modal for confirming save */}
+      {}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">

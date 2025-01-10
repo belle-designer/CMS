@@ -2,13 +2,14 @@ import React, { useState, Suspense, lazy } from 'react';
 
 import cvsuImage from '../assets/cvsu.png';
 
-// Dynamically import components from the Admin folder
+
 const MyCourse = lazy(() => import('../components/Educator/MyCourse'));
 const AssessmentManager = lazy(() => import('../components/Educator/AssessmentManager'));
 const TopicBank = lazy(() => import('../components/Educator/TopicBank'));
 const EducatorProfile = lazy(() => import('../components/Educator/EducatorProfile'));
+const EducatorMessage = lazy(() => import('../components/Educator/EducatorMessage'));
 
-// SVG icons as inline code
+
 const CourseIcon = (
   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
     <path d="M400-400h160v-80H400v80Zm0-120h320v-80H400v80Zm0-120h320v-80H400v80Zm-80 400q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
@@ -64,10 +65,10 @@ function Educator() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Left Sidebar */}
+      {}
       <div className="w-1/4 bg-green-700 text-white flex flex-col p-10">
         
-        {/* Curriculum Text with Image */}
+        {}
         <div className="flex items-center mb-20">
           <img src={cvsuImage} alt="CVSU Logo" className="w-16 h-18 mr-3" />
           <h1 className="text-3xl font-bold">Curriculum</h1>
@@ -115,19 +116,19 @@ function Educator() {
         </button>
       </div>
 
-      {/* Right Content Area */}
+      {}
       <div className="w-3/4 p-8 flex flex-col">
-        {/* Upper Section */}
+        {}
         <div className="upper flex justify-between items-center bg-gray-100 p-4">
-          {/* Search Bar */}
+          {}
           <div className="search-bar relative flex items-center w-11/12">
-            {/* Input Field */}
+            {}
             <input 
               type="text" 
               placeholder="Search..." 
               className="p-4 w-full border border-gray-300 rounded-2xl pr-32 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
             />
-            {/* Buttons inside the search bar */}
+            {}
             <div className="absolute right-2 flex items-center space-x-2">
               <button className="p-3 rounded-md hover:shadow-lg">
                 {SearchIcon}
@@ -138,24 +139,25 @@ function Educator() {
             </div>
           </div>
 
-          {/* Profile and Notifications Section */}
+          {}
           <div className="flex items-center">
-            <button className="p-3 text-gray-700 hover:text-black transition text-2xl">
+            <button onClick={() => handleSidebarClick("Educator Message")} className="p-3 text-gray-700 hover:text-black transition text-2xl">
               {MessageIcon}
             </button>
-            <div className="profile-circle border bg-white border-black rounded-full w-12 h-12 flex items-center justify-center text-2xl">
-              {/* Profile Icon */}
+            <div onClick={() => handleSidebarClick("Profile")} className="profile-circle border bg-white border-black rounded-full w-12 h-12 flex items-center justify-center text-2xl">
+              {}
             </div>
           </div>
         </div>
 
-        {/* Content Area */}
+        {}
         <div className="content p-4 flex-1">
           <Suspense fallback={<div className="text-center text-xl">Loading...</div>}>
             {activeSection === "My Course" && <MyCourse />}
             {activeSection === "Assessment Manager" && <AssessmentManager />}
             {activeSection === "Topic Bank" && <TopicBank />}
             {activeSection === "Profile" && <EducatorProfile />}
+            {activeSection === "Educator Message" && <EducatorMessage />}
             {activeSection === "Log Out" && <p>Logging out...</p>}
           </Suspense>
         </div>

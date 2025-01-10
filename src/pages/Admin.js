@@ -9,11 +9,10 @@ function Admin() {
   const handleSidebarClick = (section) => {
     setActiveSection(section);
     if (section !== "Assessment Review") {
-      setViewAssessment(false); // Reset viewAssessment when switching sections
+      setViewAssessment(false);
     }
   };
 
-  // Inside Admin component
   const handleViewAssessment = () => {
     setActiveSection("Assessment Details");
   };
@@ -84,7 +83,7 @@ function Admin() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Left Sidebar */}
+      {}
       <div className="w-1/4 bg-green-700 text-white flex flex-col p-10">
 
         <div className="flex items-center mb-20">
@@ -141,7 +140,7 @@ function Admin() {
         </button>
       </div>
 
-      {/* Right Content Area */}
+      {}
       <div className="w-3/4 p-8 flex flex-col">
 
         <div className="upper flex justify-between items-center bg-gray-100 pl-4 pr-4 pb-4">
@@ -170,7 +169,7 @@ function Admin() {
           </div>
         </div>
 
-        {/* Content */}
+        {}
         <div className="content p-4 flex-1">
           <Suspense fallback={<div className="text-center text-xl">Loading...</div>}>
             {activeSection === "User Management" && <UserManagement />}

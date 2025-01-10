@@ -16,14 +16,14 @@ function AssessmentReview({ handleViewAssessment }) {
   };
 
   const confirmApproval = () => {
-    // Find the assessment by ID
+    
     const approved = users.find((user) => user.id === selectedAssessmentId);
     setApprovedAssessments((prev) => [...prev, approved]);
 
-    // Remove the approved assessment from the users list
+   
     setUsers(users.filter((user) => user.id !== selectedAssessmentId));
 
-    // Close the modal
+    
     setApproveModalOpen(false);
   };
 
@@ -32,28 +32,28 @@ function AssessmentReview({ handleViewAssessment }) {
   };
 
   const handleAddComment = () => {
-    if (!selectedAssessmentId) return; // Ensure an assessment is selected
+    if (!selectedAssessmentId) return; 
   
-    // Add the new comment to the corresponding assessment's comment list
+   
     const updatedComments = { ...comments };
   
-    // Ensure the array for the selected assessment is initialized
+   
     if (!updatedComments[selectedAssessmentId]) {
       updatedComments[selectedAssessmentId] = [];
     }
   
-    // Add the new comment to the end of the list for the selected assessment
+    
     updatedComments[selectedAssessmentId].push({
-      user: 'Current User', // Replace with actual user
-      role: 'Reviewer', // Replace with actual role
+      user: 'Current User', 
+      role: 'Reviewer', 
       comment: newComment,
       timestamp: new Date().toLocaleString(),
     });
   
-    // Update the state with the new comment list
+    
     setComments(updatedComments);
   
-    // Update the local comments as well for rendering
+    
     const updatedLocalComments = { ...localcomments };
   
     if (!updatedLocalComments[selectedAssessmentId]) {
@@ -61,16 +61,16 @@ function AssessmentReview({ handleViewAssessment }) {
     }
   
     updatedLocalComments[selectedAssessmentId].push({
-      user: 'Mikaella Arciaga', // Replace with actual user
-      role: 'Admin', // Replace with actual role
+      user: 'Mikaella Arciaga', 
+      role: 'Admin', 
       comment: newComment,
       timestamp: new Date().toLocaleString(),
     });
   
-    // Update local comments state
+    
     setLocalComments(updatedLocalComments);
   
-    // Clear the input field
+   
     setNewComment('');
   };
   
@@ -345,12 +345,12 @@ function AssessmentReview({ handleViewAssessment }) {
                   </td>
                   <td className="py-3 px-4 text-gray-600 w-1/4">
 
-                    {/* Approve Button */}
+                    {}
                     <button onClick={() => handleApprove(true)}>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0e7529"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg>
                     </button>
 
-                    {/*Comment Button */}
+                    {}
                     <button className="ml-2" onClick={() => {
                     setSelectedAssessmentId(user.id); // Set the selected assessment ID
                     setCommentModalOpen(true); }}>
@@ -396,7 +396,7 @@ function AssessmentReview({ handleViewAssessment }) {
       </div>
     </div>
 
-      {/* Approve Modal */}
+      {}
       {isApproveModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white rounded-lg shadow-lg p-6 w-96">
@@ -418,7 +418,7 @@ function AssessmentReview({ handleViewAssessment }) {
     <div className="bg-white rounded-lg shadow-lg p-6 w-96">
       <h2 className="text-lg font-semibold mb-4">Private Comment</h2>
 
-      {/* Display Existing Comments */}
+      {}
       <div className="mb-4">
         <h3 className="text-sm font-medium mb-2">Previous Comments:</h3>
         {localcomments[selectedAssessmentId]?.length > 0 ? (
@@ -435,7 +435,7 @@ function AssessmentReview({ handleViewAssessment }) {
         )}
       </div>
 
-      {/* Add New Comment */}
+      {}
       <label htmlFor="comment" className="block text-sm font-medium mb-2">
         Add a Comment:
       </label>

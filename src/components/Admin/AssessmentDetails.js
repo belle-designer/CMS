@@ -165,7 +165,7 @@ const AssessmentDetails = ({ handleBackToReview }) => {
 
   return (
     <div className="assessment-details">
-      {/* Up Section */}
+      {}
       <div className="up flex items-center bg-gray-100 pb-5">
         <button onClick={handleBackToReview} className="arrow-icon bg-white p-2 rounded-l-xl mr-2 w-12">
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28 px" fill="#000000">
@@ -175,7 +175,7 @@ const AssessmentDetails = ({ handleBackToReview }) => {
         <span className="text-4xl font-semibold">ASSESSMENT</span>
       </div>
 
-      {/* Mid Section */}
+      {}
       <div className="mid bg-white rounded-lg shadow p-4 mb-4">
         <div className="flex justify-between items-center text-lg">
           <div className="left font-semibold">{data.name}</div>
@@ -183,37 +183,37 @@ const AssessmentDetails = ({ handleBackToReview }) => {
         </div>
       </div>
 
-      {/* Down Section */}
+      {}
       <div className="down bg-white rounded-lg shadow p-2 items-center text-center justify-center">
         <div className="up mt-6 mb-3">
-          {/* Content for up */}
+          {}
           <div className="items-center justify-center text-center rounded-md text-2xl font-semibold">
             <h2>{data.topic}</h2>
           </div>
         </div>
         <div className="mid-1 mb-4">
-          {/* Content for mid 1 */}
+          {}
           <div className="items-center justify-center text-center rounded-md overflow-auto">
             <h2>{data.description}</h2>
           </div>
         </div>
         <div className="mid-2 mt-5 mb-5">
-          {/* Content for mid 2 */}
+          {}
           <div className="items-center justify-center text-center rounded-md overflow-auto">
             <h2>{data.attachment_file}</h2>
           </div>
         </div>
 
-      {/* Down Bottom Box */}
+      {}
       <div className="flex items-center justify-center pb-8">
         <div className="down-bottom bg-gray-200 p-6 rounded-2xl mt-4 w-2/3">
-          {/* Up Section */}
+          {}
           <div className="flex justify-between items-center mb-4">
             <div className="text-lg font-bold">Rubric</div>
             <div className="text-lg font-bold">{data.rubric.overall_points}</div>
           </div>
 
-            {/* Rubric Details */}
+            {}
             <div className="space-y-4">
               {data.rubric.categories.map((item, index) => (
                 <div key={index} className="flex flex-col space-y-1">
