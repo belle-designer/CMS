@@ -16,7 +16,7 @@ function AssessmentManager() {
 
   
 
-  // New states for Rubric modal
+ 
   const [isRubricModalOpen, setIsRubricModalOpen] = useState(false);
   const [rubricTitle, setRubricTitle] = useState('');
   const [rubricDescription, setRubricDescription] = useState('');
@@ -91,12 +91,11 @@ function AssessmentManager() {
     }
   };
 
-  // Open Rubric Modal
+ 
   const handleAddRubricClick = () => {
     setIsRubricModalOpen(true); 
   };
 
-  // Close Rubric Modal
   const handleCloseRubricModal = () => {
     setIsRubricModalOpen(false);
   };
@@ -109,23 +108,23 @@ function AssessmentManager() {
 
   const handleSave = (e) => {
     if (e && typeof e.preventDefault === "function") {
-      e.preventDefault(); // Prevent default behavior for form submissions
+      e.preventDefault(); 
     }
-    setSavedPoints(points); // Update the savedPoints with the current points
+    setSavedPoints(points);
     console.log('Rubric Saved');
   };
 
   const handleSavee = (data) => {
-    // Add save logic here (e.g., API call or state updates)
+    
     console.log('Saving rubric...');
     
-    // Close the modal
+   
     setIsRubricModalOpen(false);
   };
 
   return (
     <div className="p-6">
-      {/* Create Header */}
+      {}
       <h1 className="text-2xl font-bold mb-4 flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +140,7 @@ function AssessmentManager() {
         Create
       </h1>
 
-      {/* Table */}
+      {}
       <table className="table-auto text-center justify-center items-center w-full border-collapse bg-white rounded-2xl shadow">
         <thead>
           <tr className="bg-white border-b-2 border-black rounded-t-lg">
@@ -157,7 +156,7 @@ function AssessmentManager() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -170,7 +169,7 @@ function AssessmentManager() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -183,7 +182,7 @@ function AssessmentManager() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick={handleDeleteClick} className="cursor-pointer">
                 <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -192,7 +191,7 @@ function AssessmentManager() {
         </tbody>
       </table>
 
-      {/* Main Modal for Creating or Editing */}
+      {}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">
@@ -275,7 +274,7 @@ function AssessmentManager() {
                     Save
                   </button>
                 </div>
-                {/* Add Rubric Button */}
+                {}
                 <div className="flex items-center space-x-2 cursor-pointer" onClick={handleAddRubricClick}>
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="undefined">
                     <path d="m140-220-60-60 300-300 160 160 284-320 56 56-340 384-160-160-240 240Z"/>
@@ -288,16 +287,16 @@ function AssessmentManager() {
         </div>
       )}
 
- {/* Rubric Modal */}
+ {}
 {isRubricModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
     <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96 relative">
       
-      {/* Header with RUBRIC title and dynamically updated /points */}
+      {}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-[#0e7529]">RUBRIC</h2>
         <div className="text-xl text-[#0e7529] font-semibold">
-          {savedPoints ? `/${savedPoints}` : `/0`} {/* Display savedPoints or default to 0 */}
+          {savedPoints ? `/${savedPoints}` : `/0`} {}
         </div>
       </div>
 
@@ -319,16 +318,16 @@ function AssessmentManager() {
         />
       </div>
 
-      {/* Scrollable container for boxes */}
+      {}
       <div className="h-64 overflow-y-auto border border-gray-300 rounded-lg mb-4 p-2">
         {rubricBoxes.map((box, index) => (
           <div key={index} className="border-2 border-black w-full h-auto mb-4 rounded-lg p-4 relative">
             <div className="absolute top-2 right-2 flex space-x-2">
-              {/* Minus Button */}
+              {}
               <button
                 onClick={() => {
                   const updatedBoxes = [...rubricBoxes];
-                  updatedBoxes.splice(index, 1); // Remove the selected box
+                  updatedBoxes.splice(index, 1); 
                   setRubricBoxes(updatedBoxes);
                 }}
                 className="bg-transparent border-none cursor-pointer"
@@ -374,7 +373,7 @@ function AssessmentManager() {
         ))}
       </div>
 
-      {/* Create Button */}
+      {}
       <div className="mt-2 flex justify-center">
         <button
           onClick={() =>
@@ -391,7 +390,7 @@ function AssessmentManager() {
         </button>
       </div>
 
-      {/* Save Button */}
+      {}
       <div className="mt-6 flex justify-center">
         <button
           onClick={() => {
@@ -399,8 +398,8 @@ function AssessmentManager() {
               (sum, box) => sum + (parseInt(box.points) || 0),
               0
             );
-            setSavedPoints(totalPoints); // Update savedPoints
-            setIsRubricModalOpen(false); // Close modal
+            setSavedPoints(totalPoints); 
+            setIsRubricModalOpen(false); 
           }}
           className="px-6 py-2 bg-[#0e7529] text-white rounded-lg hover:bg-green-600"
         >
@@ -418,7 +417,7 @@ function AssessmentManager() {
 
 
 
-      {/* Confirmation Modal */}
+      {}
       {isConfirmationModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">

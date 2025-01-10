@@ -1,37 +1,37 @@
 import React, { useState } from 'react';
-import messagesData from '../../data/messagesData'; // Ensure messagesData includes 'recipient' field
+import messagesData from '../../data/messagesData'; 
 
 function AdminMessage() {
-  const [selectedSender, setSelectedSender] = useState(messagesData[0]?.sender); // Default to the first sender
-  const [messages, setMessages] = useState(messagesData); // All messages (user and others)
+  const [selectedSender, setSelectedSender] = useState(messagesData[0]?.sender); 
+  const [messages, setMessages] = useState(messagesData); 
   const [newMessage, setNewMessage] = useState('');
-  const [loggedInUser, setLoggedInUser] = useState('You'); // Logged-in user is 'You'
+  const [loggedInUser, setLoggedInUser] = useState('You'); 
 
   const handleSendMessage = () => {
-    // Create a new message object
+    
     const message = {
-      id: messages.length + 1, // Unique ID for each message
-      sender: loggedInUser, // This is dynamic (currently 'You' for the logged-in user)
-      recipient: selectedSender, // The recipient is the selected sender
-      timestamp: new Date().toLocaleString(), // Current timestamp
-      content: newMessage, // Content from the input
+      id: messages.length + 1, 
+      sender: loggedInUser, 
+      recipient: selectedSender, 
+      timestamp: new Date().toLocaleString(),
+      content: newMessage, 
     };
 
-    // Add the new message to the messages array
+    
     setMessages((prevMessages) => [...prevMessages, message]);
 
-    // Clear the input field after sending the message
+ 
     setNewMessage('');
   };
 
-  // Filter messages to display only messages between 'You' and the selected sender
+  
   const filteredMessages = messages.filter(
     (message) =>
       (message.sender === loggedInUser && message.recipient === selectedSender) ||
       (message.sender === selectedSender && message.recipient === loggedInUser)
   );
 
-  // Get the latest message for each sender to display in the left section
+ 
   const latestMessagesBySender = messages.reduce((acc, message) => {
     if (message.sender !== loggedInUser) {
       acc[message.sender] = message;
@@ -41,7 +41,7 @@ function AdminMessage() {
 
   return (
     <div className="flex rounded-xl overflow-hidden shadow-lg">
-      {/* Left Section - 25% */}
+      {}
       <div className="w-1/4 bg-white border-r-2 border-gray-100 rounded-l-xl">
         <h2 className="text-xl font-bold text-green-700 p-4 border-b-2">Messages</h2>
         <ul>
@@ -57,7 +57,7 @@ function AdminMessage() {
                 }`}
               >
                 <div className="flex items-center">
-                  {/* Profile picture */}
+                  {}
                   <img
                     src={message.profilePicture}
                     alt={message.sender}
@@ -75,7 +75,7 @@ function AdminMessage() {
         </ul>
       </div>
 
-      {/* Right Section - 75% */}
+      {}
       <div className="flex w-3/4 bg-white flex-col rounded-r-xl">
         <div className="flex-grow">
           <div className='border-b-2 p-4'>
@@ -108,7 +108,7 @@ function AdminMessage() {
           </div>
         </div>
 
-        {/* Message box and send button */}
+        {}
         <div className="mt-4 border-t pt-4 p-6 flex items-center rounded-b-xl">
           <input
             type="text"

@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 function TopicBank() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); // New state for confirmation modal
-  const [confirmationMessage, setConfirmationMessage] = useState(''); // Confirmation message
-  const [confirmationAction, setConfirmationAction] = useState(null); // Store the action (delete or save)
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); 
+  const [confirmationMessage, setConfirmationMessage] = useState(''); 
+  const [confirmationAction, setConfirmationAction] = useState(null); 
   const [courseName, setCourseName] = useState('');
   const [topics, setTopics] = useState('');
   const [description, setDescription] = useState('');
@@ -14,9 +14,8 @@ function TopicBank() {
   const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
 
   const handleCreateClick = () => {
-    setIsModalOpen(true); // Open the modal for creating a new course
-    setIsEditing(false); // Set the modal in "create" mode
-    // Clear fields for new course creation
+    setIsModalOpen(true); 
+    setIsEditing(false); 
     setCourseName('');
     setTopics('');
     setDescription('');
@@ -25,49 +24,46 @@ function TopicBank() {
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false);
   };
 
   const handleSaveClick = (e) => {
-    e.preventDefault(); // Prevent default form submit
+    e.preventDefault(); 
     setConfirmationMessage('Are you sure you want to save?');
     setConfirmationAction('save');
-    setIsConfirmationModalOpen(true); // Open confirmation modal for save action
+    setIsConfirmationModalOpen(true);
   };
 
   const handleDeleteClick = () => {
     setConfirmationMessage('Are you sure you want to delete?');
     setConfirmationAction('delete');
-    setIsConfirmationModalOpen(true); // Open the confirmation modal for deleting
+    setIsConfirmationModalOpen(true); 
   };
 
   const confirmAction = () => {
-    if (confirmationAction === 'save' || confirmationAction === 'delete') {
-      // Close the modals after confirming the action
-      setIsModalOpen(false); // Close the main modal (create or edit)
-      setIsConfirmationModalOpen(false); // Close the confirmation modal
+    if (confirmationAction === 'save' || confirmationAction === 'delete') {  
+      setIsModalOpen(false); 
+      setIsConfirmationModalOpen(false); 
     }
   };
   
 
   const handleEditClick = (existingCourseName, existingTopics, existingDescription, existingObjectives, existingAttachment) => {
-    setIsModalOpen(true); // Open the modal for editing
-    setIsEditing(true); // Set the modal in "edit" mode
-    setCourseName(existingCourseName); // Populate course name
-    setTopics(existingTopics); // Populate topics
-    setDescription(existingDescription); // Populate description
-    setObjectives(existingObjectives); // Populate objectives
-    setAttachment(existingAttachment); // Populate attachment
+    setIsModalOpen(true);
+    setIsEditing(true); 
+    setCourseName(existingCourseName);
+    setTopics(existingTopics); 
+    setDescription(existingDescription); 
+    setObjectives(existingObjectives); 
+    setAttachment(existingAttachment); 
   };
   const handleUploadClick = () => {
     setShowAttachmentOptions(false);
-    // Trigger file input dialog
     document.getElementById('fileUploadInput').click();
   };
   
   const handleCreateAttachment = () => {
     setShowAttachmentOptions(false);
-    // Implement logic for creating a new attachment
     console.log('Creating new attachment...');
   };
   
@@ -82,7 +78,7 @@ function TopicBank() {
 
   return (
     <div className="p-6">
-      {/* Create Header */}
+      {}
       <h1 className="text-2xl font-bold mb-4 flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +94,7 @@ function TopicBank() {
         Create
       </h1>
 
-      {/* Table */}
+      {}
       <table className="table-auto text-center justify-center items-center w-full border-collapse bg-white rounded-2xl shadow">
         <thead>
           <tr className="bg-white border-b-2 border-black rounded-t-lg">
@@ -114,7 +110,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -127,7 +123,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -140,7 +136,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -151,7 +147,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -164,7 +160,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -177,7 +173,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -188,7 +184,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -201,7 +197,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -214,7 +210,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -225,7 +221,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -238,7 +234,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -251,7 +247,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -262,7 +258,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -275,7 +271,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -288,7 +284,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -299,7 +295,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -312,7 +308,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -325,7 +321,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -336,7 +332,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -349,7 +345,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -362,7 +358,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -373,7 +369,7 @@ function TopicBank() {
             <td className="px-4 py-2">Variables, Loops, Lists</td>
             <td className="px-4 py-2">In Progress</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {/* Save Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -386,7 +382,7 @@ function TopicBank() {
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
               </svg>
 
-              {/* Edit Icon */}
+              {}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
@@ -399,7 +395,7 @@ function TopicBank() {
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
               </svg>
 
-              {/* Delete Icon */}
+              {}
              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
@@ -409,7 +405,7 @@ function TopicBank() {
         </tbody>
       </table>
 
-      {/* Main Modal for Creating or Editing */}
+      {}
 {isModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
     <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">
@@ -496,7 +492,7 @@ function TopicBank() {
     </div>
   </div>
 )}
-{/* Confirmation Modal for Save or Delete */}
+{}
 {isConfirmationModalOpen && (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
     <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">

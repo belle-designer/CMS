@@ -4,7 +4,7 @@ function DataRepository() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
   
-    {/*SAMPLE DATA*/}
+    {}
     const assessments = [
       {
         "id": 1,
@@ -207,21 +207,21 @@ return (
               <td className="py-3 px-4 text-gray-600 truncate">{item.type}</td>
               <td className="py-3 px-4 text-gray-600">
 
-                {/* Save Button */}
+                {}
                 <button className="mr-2">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#0e7529">
                     <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
                   </svg>
                 </button>
 
-                {/* Edit Button */}
+                {}
                 <button>
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
                     <path d="M80 0v-160h800V0H80Zm160-320h56l312-311-29-29-28-28-311 312v56Zm-80 80v-170l448-447q11-11 25.5-17t30.5-6q16 0 31 6t27 18l55 56q12 11 17.5 26t5.5 31q0 15-5.5 29.5T777-687L330-240H160Zm560-504-56-56 56 56ZM608-631l-29-29-28-28 57 57Z"/>
                   </svg>
                 </button>
 
-                {/* Delete Button */}
+                {}
                 <button className="ml-2">
                   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ff2929">
                     <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>

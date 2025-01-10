@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import hide from "../assets/hide.svg"; // Replace with your image path
-import show from "../assets/show.svg"; // Replace with your image path
-import previewImage from "../assets/preview.jpg"; // Replace with your image path
-import aboutImage from "../assets/about.jpg"; // Replace with your image path
-import programImage from "../assets/program.jpg"; // Replace with your image path
+import hide from "../assets/hide.svg"; 
+import show from "../assets/show.svg"; 
+import previewImage from "../assets/preview.jpg"; 
+import aboutImage from "../assets/about.jpg"; 
+import programImage from "../assets/program.jpg"; 
 
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -17,7 +17,7 @@ function Login() {
     setActiveLink(linkName);
   };
 
-  // Map active link to images
+  
   const imageMap = {
     Preview: previewImage,
     About: aboutImage,
@@ -27,7 +27,7 @@ function Login() {
   return (
     <div className="h-screen flex items-center justify-center bg-white">
       <div className="flex w-full h-full bg-white">
-        {/* Left Section */}
+        {}
         <div className="w-1/3 bg-green-700 text-white p-12 flex flex-col justify-center rounded-r-3xl h-full">
           <div className="pb-32">
             <h1 className="text-4xl font-bold mb-10">Curriculum.</h1>
@@ -90,7 +90,7 @@ function Login() {
           </div>
         </div>
 
-        {/* Right Section */}
+        {}
         <div className="w-2/3 bg-white p-8 flex flex-col justify-between rounded-r-lg h-full">
           <nav className="flex justify-between items-center mb-6">
             <div className="flex gap-6">
