@@ -59,7 +59,6 @@ function Educator() {
   };
 
   const handleLogOut = () => {
-    // Logic for logging out
     console.log("Logging out...");
   };
 
@@ -71,7 +70,7 @@ function Educator() {
         {}
         <div className="flex items-center mb-20">
           <img src={cvsuImage} alt="CVSU Logo" className="w-16 h-18 mr-3" />
-          <h1 className="text-3xl font-bold">Curriculum</h1>
+          <h1 className="text-3xl font-bold"> CurricuLink <span className="block text-lg">Educator</span></h1>
         </div>
 
         <div className="flex flex-col gap-4 mb-10">

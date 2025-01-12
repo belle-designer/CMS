@@ -13,16 +13,15 @@ function AssessmentManager() {
   const [isEditing, setIsEditing] = useState(false);
   const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
   const [rubricBoxes, setRubricBoxes] = useState([]);
-
-  
-
- 
   const [isRubricModalOpen, setIsRubricModalOpen] = useState(false);
   const [rubricTitle, setRubricTitle] = useState('');
   const [rubricDescription, setRubricDescription] = useState('');
   const [points, setPoints] = useState('');
   const [title, setTitle] = useState('');
   const [savedPoints, setSavedPoints] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]);
+  const itemsPerPage = 10;
 
   const updateRubricBox = (index, field, value) => {
     const updatedBoxes = [...rubricBoxes];
@@ -122,6 +121,15 @@ function AssessmentManager() {
     setIsRubricModalOpen(false);
   };
 
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const currentData = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="p-6">
       {}
@@ -140,10 +148,10 @@ function AssessmentManager() {
         Create
       </h1>
 
-      {}
-      <table className="table-auto text-center justify-center items-center w-full border-collapse bg-white rounded-2xl shadow">
+      <div className='bg-white rounded-lg'>
+      <table className="table-auto text-center justify-center items-center w-full rounded-lg border-collapse">
         <thead>
-          <tr className="bg-white border-b-2 border-black rounded-t-lg">
+          <tr className="border-b-2 border-black">
             <th className="px-4 py-2">COURSE</th>
             <th className="px-4 py-2">TOPICS</th>
             <th className="px-4 py-2">STATUS</th>
@@ -190,6 +198,40 @@ function AssessmentManager() {
           </tr>
         </tbody>
       </table>
+
+      <div className="border-t-2 border-black flex justify-center">
+        <div className="flex space-x-2 justify-center items-center pt-4 pb-4">
+          <button
+            className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+              <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+            </svg>
+          </button>
+
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              className={`w-3 h-3 rounded-full cursor-pointer ${currentPage === index + 1 ? 'bg-green-500' : 'bg-gray-300'}`}
+              onClick={() => handlePageChange(index + 1)}
+            ></button>
+          ))}
+          
+          <button
+            className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+              <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      </div>
+
 
       {}
       {isModalOpen && (
@@ -407,6 +449,7 @@ function AssessmentManager() {
         </button>
       </div>
     </div>
+
   </div>
 )}
 
