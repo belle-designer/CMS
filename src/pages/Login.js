@@ -1,69 +1,65 @@
 import React, { useState } from "react";
-import hide from "../assets/hide.svg"; 
-import show from "../assets/show.svg"; 
-import previewImage from "../assets/preview.jpg"; 
-import aboutImage from "../assets/about.jpg"; 
-import programImage from "../assets/program.jpg"; 
+import { useNavigate } from "react-router-dom";
+import hide from "../assets/hide.svg";
+import show from "../assets/show.svg";
+import backgroundImage from "../assets/preview.jpg";
+import logo from "../assets/cvsu.png";
 
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [activeLink, setActiveLink] = useState("Preview");
+  const navigate = useNavigate();
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    navigate("/forgot");
+  };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleLinkClick = (linkName) => {
-    setActiveLink(linkName);
-  };
-
-  
-  const imageMap = {
-    Preview: previewImage,
-    About: aboutImage,
-    Program: programImage,
-  };
-
   return (
-    <div className="h-screen flex items-center justify-center bg-white">
-      <div className="flex w-full h-full bg-white">
-        {}
-        <div className="w-1/3 bg-green-700 text-white p-12 flex flex-col justify-center rounded-r-3xl h-full">
-          <div className="pb-32">
-            <h1 className="text-4xl font-bold mb-10">Curriculum.</h1>
-          </div>
+    <div className="h-screen flex">
 
-          <div className="pb-10">
-            <h2 className="text-3xl mb-6">Sign in</h2>
-          </div>
+      <div className="w-1/4 bg-green-700 p-12 flex flex-col justify-between">
+        <div className="flex items-center mb-12">
+          <img
+            src={logo}
+            alt="Logo"
+            className="w-20 h-auto mr-3"
+          />
+          <h1 className="text-4xl font-bold text-white">CurricuLink</h1>
+        </div>
 
-          <form>
-            <div className="mb-6">
-              <label htmlFor="email" className="block text-sm mb-2">
+        <div className="flex flex-col justify-center flex-grow mb-10">
+          <h2 className="text-3xl font-semibold text-white mb-6 text-left">Sign In</h2>
+          <form className="w-full">
+            <div className="mb-10">
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                 Username or Email Address
               </label>
               <input
                 type="text"
                 id="email"
-                className="w-full p-4 rounded-lg text-black"
+                className="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                 placeholder="Enter your email"
               />
             </div>
             <div className="mb-6">
-              <label htmlFor="password" className="block text-sm mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
                 Password
               </label>
-              <div className="flex items-center">
+              <div className="relative">
                 <input
                   type={passwordVisible ? "text" : "password"}
                   id="password"
+                  className="w-full p-4 border rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="Enter your password"
-                  className="w-full p-4 rounded-l-lg text-black"
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="ml-2 bg-white p-4 rounded-r-lg"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-500"
                 >
                   <img
                     src={passwordVisible ? hide : show}
@@ -73,67 +69,30 @@ function Login() {
                 </button>
               </div>
             </div>
-          </form>
 
-          <div className="pt-20 pb-20">
+            <div className="border-t border-white mt-32 mb-10"></div>
             <button
               type="submit"
-              className="w-full bg-white text-green-700 py-4 rounded-lg font-bold hover:bg-gray-200 mt-6"
+              className="w-full bg-white text-green-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition-colors"
             >
-              Sign in
+              Sign In
             </button>
-            <p className="text-sm mt-6 text-center">
-              <a href="#" className="underline">
-                Forgot password?
-              </a>
-            </p>
-          </div>
-        </div>
-
-        {}
-        <div className="w-2/3 bg-white p-8 flex flex-col justify-between rounded-r-lg h-full">
-          <nav className="flex justify-between items-center mb-6">
-            <div className="flex gap-6">
-              {["Preview", "About", "Program"].map((link) => (
-                <div key={link} className="text-center">
-                  <a
-                    href="#"
-                    onClick={() => handleLinkClick(link)}
-                    className={`text-sm text-gray-700 hover:text-green-700 ${
-                      activeLink === link ? "text-green-700" : ""
-                    }`}
-                  >
-                    {link}
-                  </a>
-                  {activeLink === link && (
-                    <div className="flex justify-center mt-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="12px"
-                        viewBox="0 -960 960 960"
-                        width="12px"
-                        fill="#0e7529"
-                      >
-                        <path d="M440-120v-264L254-197l-57-57 187-186H120v-80h264L197-706l57-57 186 187v-264h80v264l186-187 57 57-187 186h264v80H576l187 186-57 57-186-187v264h-80Z" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <button className="bg-green-700 text-white py-2 px-6 rounded-lg hover:bg-green-800">
-              Sign in
-            </button>
-          </nav>
-          <div className="flex justify-center items-center flex-grow">
-            <img
-              src={imageMap[activeLink]}
-              alt={activeLink}
-              className="max-w-full max-h-full"
-            />
-          </div>
+            <p className="text-sm mt-6 text-center text-white flex items-center justify-center">
+            <a href="#" onClick={handleForgotPassword} className="underline text-white hover:text-gray-300 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF">
+              <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-80-240q-17 0-28.5-11.5T360-360v-120q0-17 11.5-28.5T400-520v-40q0-33 23.5-56.5T480-640q33 0 56.5 23.5T560-560v40q17 0 28.5 11.5T600-480v120q0 17-11.5 28.5T560-320H400Zm40-200h80v-40q0-17-11.5-28.5T480-600q-17 0-28.5 11.5T440-560v40Z"/>
+            </svg>
+              Forgot password?
+            </a>
+          </p>
+          </form>
         </div>
       </div>
+
+      <div
+        className="w-3/4 bg-cover bg-center"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      ></div>
     </div>
   );
 }

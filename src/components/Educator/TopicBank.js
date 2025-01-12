@@ -12,6 +12,9 @@ function TopicBank() {
   const [attachment, setAttachment] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]);
+  const itemsPerPage = 10;
 
   const handleCreateClick = () => {
     setIsModalOpen(true); 
@@ -74,7 +77,14 @@ function TopicBank() {
     }
   };
 
-  
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const currentData = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="p-6">
@@ -95,9 +105,10 @@ function TopicBank() {
       </h1>
 
       {}
-      <table className="table-auto text-center justify-center items-center w-full border-collapse bg-white rounded-2xl shadow">
+      <div className='bg-white rounded-lg'>
+      <table className="table-auto text-center justify-center items-center w-full border-collapse">
         <thead>
-          <tr className="bg-white border-b-2 border-black rounded-t-lg">
+          <tr className="border-b-2 border-black">
             <th className="px-4 py-2">COURSE</th>
             <th className="px-4 py-2">TOPICS</th>
             <th className="px-4 py-2">STATUS</th>
@@ -405,114 +416,147 @@ function TopicBank() {
         </tbody>
       </table>
 
-      {}
-{isModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">
-      <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: '#0e7529' }}>
-        {isEditing ? 'Edit Course' : 'MATERIAL'}
-      </h2>
-      <form onSubmit={handleSaveClick}>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Topic (Required):</label>
-          <input
-            type="text"
-            placeholder=""
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Course:</label>
-          <input
-            type="text"
-            placeholder=""
-            value={topics}
-            onChange={(e) => setTopics(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Description:</label>
-          <input
-            type="text"
-            placeholder=""
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Objectives</label>
-          <input
-            type="text"
-            placeholder=""
-            value={objectives}
-            onChange={(e) => setObjectives(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Add attachment:</label>
-          <div className="relative">
+      <div className="border-black flex justify-center">
+        <div className="flex space-x-2 justify-center items-center pt-4 pb-4">
+          <button
+            className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+              <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+            </svg>
+          </button>
+
+          {[...Array(totalPages)].map((_, index) => (
             <button
-              type="button"
-              onClick={() => document.getElementById('fileUploadInput').click()}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200 text-left"
-            >
-              {attachment || 'Upload Attachment'}
-            </button>
-            <input
-              type="file"
-              id="fileUploadInput"
-              style={{ display: 'none' }}
-              onChange={(e) => setAttachment(e.target.files[0]?.name || '')}
-            />
-          </div>
+              key={index}
+              className={`w-3 h-3 rounded-full cursor-pointer ${currentPage === index + 1 ? 'bg-green-500' : 'bg-gray-300'}`}
+              onClick={() => handlePageChange(index + 1)}
+            ></button>
+          ))}
+          
+          <button
+            className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#000000">
+              <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
+            </svg>
+          </button>
         </div>
+      </div>
+      </div>
 
-        <div className="flex justify-between items-center">
-  <button
-    type="button"
-    onClick={handleCloseModal}
-    className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-  >
-    Cancel
-  </button>
-  <button
-    type="submit"
-    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-  >
-    Save
-  </button>
-</div>
+      {}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">
+            <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: '#0e7529' }}>
+              {isEditing ? 'Edit Course' : 'MATERIAL'}
+            </h2>
+            <form onSubmit={handleSaveClick}>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Topic (Required):</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={courseName}
+                  onChange={(e) => setCourseName(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Course:</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={topics}
+                  onChange={(e) => setTopics(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Description:</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Objectives</label>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={objectives}
+                  onChange={(e) => setObjectives(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Add attachment:</label>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('fileUploadInput').click()}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-200 text-left"
+                  >
+                    {attachment || 'Upload Attachment'}
+                  </button>
+                  <input
+                    type="file"
+                    id="fileUploadInput"
+                    style={{ display: 'none' }}
+                    onChange={(e) => setAttachment(e.target.files[0]?.name || '')}
+                  />
+                </div>
+              </div>
 
-      </form>
-    </div>
-  </div>
-)}
-{}
-{isConfirmationModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">
-      <h2 className="text-xl font-bold mb-4 text-center">{confirmationMessage}</h2>
-      <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center">
         <button
-          onClick={() => setIsConfirmationModalOpen(false)}
+          type="button"
+          onClick={handleCloseModal}
           className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
         >
           Cancel
         </button>
         <button
-          onClick={confirmAction}
-          className="px-4 py-2 bg-[#0e7529] text-white rounded-lg hover:bg-green-600"
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
-          Confirm
+          Save
         </button>
       </div>
-    </div>
-  </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+      {}
+      {isConfirmationModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-96">
+            <h2 className="text-xl font-bold mb-4 text-center">{confirmationMessage}</h2>
+            <div className="flex justify-between items-center">
+              <button
+                onClick={() => setIsConfirmationModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmAction}
+                className="px-4 py-2 bg-[#0e7529] text-white rounded-lg hover:bg-green-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
