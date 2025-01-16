@@ -25,40 +25,69 @@ function Forgot() {
     return () => clearInterval(timer); // Clean up the timer on component unmount
   }, [timeLeft]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Validation: Check if email is entered
     if (!email) {
       setError("Email is required.");
       return;
     }
-
+  
     // Clear any previous errors
     setError("");
-
-    emailjs
-    .send(
-      "service_bmc645h", // Service ID
-      "template_yobu8h9", // Template ID
-      { email: email }, // Email data
-      "AmSQoRsfP_t_jW6WI" // Public key (User ID)
-    )
-    .then(
-      (response) => {
-        console.log("Success!", response.status, response.text);
-        setEmailSent(true);
-        setSentEmail(email); // Store the email for confirmation display
-        setTimeLeft(60); // Set the 1-minute timer for resending the email
-        setResendAllowed(false); // Disable the resend button immediately after sending
-        setEmail(""); // Clear the input field after submission
-      },
-      (error) => {
-        console.log("Failed to send email:", error);
-        setError(`Failed to send reset email. Please try again. Error: ${error.text || error.message}`);
+    console.log('test');
+    try {
+      console.log('test');
+      // Step 1: Verify email in the database
+      const response = await fetch('http://localhost:5005/api/getAllUsers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      console.log('is test good?');
+      const data = await response.json();
+      console.log("data is good");
+  
+      if (response.ok) {
+        // Email found in the database
+        console.log("Email exists in the database:", data);
+  
+        // Step 2: Send email through EmailJS
+        emailjs
+          .send(
+            "service_bmc645h", // Service ID
+            "template_yobu8h9", // Template ID
+            { email: email }, // Email data
+            "AmSQoRsfP_t_jW6WI" // Public key (User ID)
+          )
+          .then(
+            (response) => {
+              console.log("Success!", response.status, response.text);
+              setEmailSent(true);
+              setSentEmail(email); // Store the email for confirmation display
+              setTimeLeft(60); // Set the 1-minute timer for resending the email
+              setResendAllowed(false); // Disable the resend button immediately after sending
+              setEmail(""); // Clear the input field after submission
+            },
+            (error) => {
+              console.log("Failed to send email:", error);
+              setError(`Failed to send reset email. Please try again. Error: ${error.text || error.message}`);
+            }
+          );
+      } else {
+        // Email not found in the database
+        console.error("Error:", data.message);
+        setError(data.message || "Email not found in the database.");
       }
-    );
+    } catch (error) {
+      console.error("Error during email verification:", error);
+      setError("An error occurred while verifying the email. Please try again.");
+    }
   };
+  
 
   const handleBackToLogin = () => {
     navigate("/"); // Navigate back to the login page

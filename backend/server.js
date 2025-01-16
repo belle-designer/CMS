@@ -49,6 +49,29 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.post('/api/getAllUsers', async (req, res) => {
+  const email = req.body;
+  const query = 'SELECT * FROM `users` WHERE email = ?';
+  db.query(query,  [email], async (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Server error!' });
+    }
+    if (results.length > 0) {
+      const user = results[0];
+        res.status(200).json({
+          success: true,
+          message: 'Email found',
+          role: user.role,
+        });}
+    else {
+      res.status(401).json({
+        success: false,
+        message: 'Email not found on our server!',
+      });
+    }
+  })
+});
+
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
