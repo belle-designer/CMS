@@ -6,6 +6,18 @@ function Admin() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [viewAssessment, setViewAssessment] = useState(false);
 
+  const checkAdminAccess = () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const role = localStorage.getItem('role');
+    
+    if (!isLoggedIn || role !== 'admin') {
+      // If the user is not logged in or not an admin, redirect to login
+      window.location.href = '/';  // Or you can redirect to any other page
+    }
+  };
+  
+  checkAdminAccess();  // Call this when the admin page loads
+
   const handleSidebarClick = (section) => {
     setActiveSection(section);
     if (section !== "Assessment Review") {
