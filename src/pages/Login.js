@@ -39,7 +39,11 @@ function Login() {
         if (data.role === 'admin'){
           window.location.href = '/admin';
         }
-      } else {
+       else if (data.role === 'educator'){
+          window.location.href = '/educator';
+        } 
+      }
+      else {
         console.error('Login failed:', data.message);
         alert(data.message);
       }
