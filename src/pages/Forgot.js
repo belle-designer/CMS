@@ -47,10 +47,9 @@ function Forgot() {
         },
         body: JSON.stringify({ email }),
       });
-      console.log('is test good?');
+
       const data = await response.json();
-      console.log("data is good");
-  
+      console.log(response, data);
       if (response.ok) {
         // Email found in the database
         console.log("Email exists in the database:", data);

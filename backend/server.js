@@ -50,12 +50,13 @@ const comparePassword = async (password, hashedPassword) => {
 };
 
 app.post('/api/getAllUsers', async (req, res) => {
-  const email = req.body;
+  const {email} = req.body;
   const query = 'SELECT * FROM `users` WHERE email = ?';
-  db.query(query,  [email], async (err, results) => {
+  db.query(query,  email, async (err, results) => {
     if (err) {
       return res.status(500).json({ success: false, message: 'Server error!' });
     }
+    console.log(results, email);
     if (results.length > 0) {
       const user = results[0];
         res.status(200).json({
