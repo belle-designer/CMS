@@ -49,6 +49,36 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.get('/api/getNumberofUsers', async (req, res) => {
+  query = 'select count(*) from users where role = ?';
+  let numOfAdmins = 0;
+let numOfEducators = 0;
+
+// Query for admins
+db.query('SELECT COUNT(*) as count FROM users WHERE role = ?', ['admin'], (err, adminResults) => {
+  if (err) {
+    return res.status(500).json({ error: 'Error fetching admin data' });
+  }
+  numOfAdmins = adminResults[0].count;
+
+  // Query for educators
+  db.query('SELECT COUNT(*) as count FROM users WHERE role = ?', ['educator'], (err, educatorResults) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error fetching educator data' });
+    }
+    numOfEducators = educatorResults[0].count;
+
+    // Send combined response
+    res.status(200).json({
+      users: {
+        admins: numOfAdmins,
+        educators: numOfEducators,
+      },
+    });
+  });
+});
+});
+
 app.put('/api/resetPassword', async (req, res) => {
   const {password, email} = req.body;
   const query = 'UPDATE users SET `password` = ? WHERE email = ?';
