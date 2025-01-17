@@ -49,6 +49,22 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.put('/api/resetPassword', async (req, res) => {
+  const {password, email} = req.body;
+  const query = 'UPDATE users SET `password` = ? WHERE email = ?';
+  hashedPass = await hashPassword(password);
+  console.log(hashedPass, email);
+  db.query(query, [hashedPass, email], (err, results) => {
+    if (err) {
+      res.status(500).json({ success: false, message: 'Error updating data' });
+    } else if (results.affectedRows > 0) {
+      res.status(200).json({ success: true, message: 'User updated successfully' });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  });
+})
+
 app.post('/api/getAllUsers', async (req, res) => {
   const {email} = req.body;
   const query = 'SELECT * FROM `users` WHERE email = ?';
