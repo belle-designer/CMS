@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function UserManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,15 +10,23 @@ function UserManagement() {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', username: 'johndoe', password: '12345', role: 'Educator' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', username: 'janesmith', password: '12345', role: 'Admin' },
-    { id: 3, name: 'Emily Johnson', email: 'emily@example.com', username: 'emilyj', password: '12345', role: 'Educator' },
-    { id: 4, name: 'Michael Brown', email: 'michael@example.com', username: 'mikeb', password: '12345', role: 'Admin' },
-    { id: 5, name: 'Sarah Davis', email: 'sarah@example.com', username: 'sarahd', password: '12345', role: 'Educator' },
-    { id: 6, name: 'David Wilson', email: 'david@example.com', username: 'davidw', password: '12345', role: 'Admin' },
-    { id: 7, name: 'Laura Lee', email: 'laura@example.com', username: 'laural', password: '12345', role: 'Educator' },
-    { id: 8, name: 'James Kim', email: 'james@example.com', username: 'jamesk', password: '12345', role: 'Admin' },
-  ]);
+    ]);
+    useEffect(() => {
+      const fetchUsers = async () => {
+        try {
+          const response = await fetch('http://localhost:5005/api/getUsers');
+          if (!response.ok) {
+            throw new Error('Failed to fetch users');
+          }
+          const data = await response.json();
+          setUsers(data); // Update state with fetched data
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      };
+  
+      fetchUsers();
+    }, []); // Empty dependency array ensures this runs once on mount
 
   const handleEditClick = (user) => {
     setUserToEdit(user);

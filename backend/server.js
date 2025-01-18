@@ -49,6 +49,15 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.get('/api/getUsers', (req, res) => {
+  db.query('SELECT * FROM users', (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.status(200).json(results);
+  });
+});
+
 app.get('/api/getNumberofUsers', async (req, res) => {
   query = 'select count(*) from users where role = ?';
   let numOfAdmins = 0;
