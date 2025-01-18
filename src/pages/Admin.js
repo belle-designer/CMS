@@ -90,7 +90,8 @@ function Admin() {
   const [activeSection, setActiveSection] = useState("User Management");
 
   const handleLogOut = () => {
-    console.log("Logging out...");
+    localStorage.setItem('isLoggedIn', 'false');
+    checkAdminAccess();
   };
 
   return (
