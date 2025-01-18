@@ -71,7 +71,8 @@ function Educator() {
   checkEducatorAccess();  // Call this when the admin page loads
 
   const handleLogOut = () => {
-    console.log("Logging out...");
+    localStorage.setItem('isLoggedIn', 'false');
+    checkEducatorAccess();
   };
 
   return (
