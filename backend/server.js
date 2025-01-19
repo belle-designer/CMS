@@ -49,6 +49,31 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.put('/api/updateUser', async (req, res) => {
+  const { name, email, username, password, role, id } = req.body; // Get user ID and new role from the request body
+  hashedPass = await hashPassword(password);
+  // Check if required data is provided
+  if (!name || !email || !username || !password || !role || !id) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Update query
+  db.query(
+    'UPDATE users SET name = ?, email = ?, username = ?, password = ?, role = ? WHERE id = ?',
+    [name, email, username, hashedPass, role, id],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'No user found with the given ID' });
+      }
+      res.status(200).json({ message: 'User updated successfully' });
+    }
+  );
+});
+
+
 app.get('/api/getUsers', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
     if (err) {

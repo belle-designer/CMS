@@ -9,8 +9,8 @@ function UserManagement() {
   const [role, setRole] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-  const [users, setUsers] = useState([
-    ]);
+  const [users, setUsers] = useState([]);
+  const [refresh, setRefresh] = useState(false); // State to trigger refresh
     useEffect(() => {
       const fetchUsers = async () => {
         try {
@@ -26,7 +26,29 @@ function UserManagement() {
       };
   
       fetchUsers();
-    }, []); // Empty dependency array ensures this runs once on mount
+    }, [refresh]); // Empty dependency array ensures this runs once on mount
+
+    const updateUser = async (userData) => {
+      console.log("hi", userData);
+      try {
+        const response = await fetch('http://localhost:5005/api/updateUser', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        });
+    
+        const data = await response.json();
+        if (response.ok) {
+          console.log('User updated successfully:', data.message);
+        } else {
+          console.error('Error updating user:', data.error || data.message);
+        }
+      } catch (error) {
+        console.error('Request failed:', error);
+      }
+    };
 
   const handleEditClick = (user) => {
     setUserToEdit(user);
@@ -38,14 +60,38 @@ function UserManagement() {
     setRole(e.target.value);
   };
 
-  const confirmEdit = () => {
-    const updatedUsers = users.map((user) =>
-      user.id === userToEdit.id ? { ...user, role: role } : user
-    );
-    setUsers(updatedUsers);
-    setIsPopupVisible(false);
-    setUserToEdit(null);
+  const handleRefresh = () => {
+    setRefresh((prev) => !prev); // Toggle `refresh` to trigger useEffect
   };
+
+  const confirmEdit = async () => {
+    try {
+      // Create an updated user object with the new role
+      const updatedUser = { ...userToEdit, role: role };
+  
+      // Update the user on the backend
+      await updateUser(updatedUser); // Ensure this call completes before proceeding
+  
+      // Update the local users state
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user // Update only the relevant user
+        )
+      );
+  
+      // Trigger a re-fetch or refresh logic
+      setRefresh((prev) => !prev);
+  
+      // Close the popup and reset the userToEdit state
+      setIsPopupVisible(false);
+      setUserToEdit(null);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      // Optional: Add error handling or show an error message to the user
+    }
+  };
+  
+
 
   const cancelEdit = () => {
     setIsPopupVisible(false);
@@ -332,39 +378,43 @@ function UserManagement() {
             <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
               <h3 className="text-lg font-semibold mb-4">Edit User</h3>
               <form onSubmit={(e) => e.preventDefault()}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Name:</label>
-                  <input
-                    type="text"
-                    value={userToEdit.name}
-                    disabled
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Email:</label>
-                  <input
-                    type="email"
-                    value={userToEdit.email}
-                    disabled
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Username:</label>
-                  <input
-                    type="text"
-                    value={userToEdit.username}
-                    disabled
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Name:</label>
+                <input
+                  type="text"
+                  value={userToEdit.name || ''} // Default value if userToEdit.password is undefined
+                  disabled
+                  // onChange={(e) => setUserToEdit({ ...userToEdit, name: e.target.value })} // Update the state with the new password
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Email:</label>
+                <input
+                  type="text"
+                  value={userToEdit.email || ''} // Default value if userToEdit.password is undefined
+                  disabled
+                  // onChange={(e) => setUserToEdit({ ...userToEdit, email: e.target.value })} // Update the state with the new password
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Username:</label>
+                <input
+                  type="text"
+                  value={userToEdit.username || ''} // Default value if userToEdit.password is undefined
+                  disabled
+                  // onChange={(e) => setUserToEdit({ ...userToEdit, username: e.target.value })} // Update the state with the new password
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">Password:</label>
                   <input
                     type="password"
                     value={userToEdit.password}
                     disabled
+                    onChange={(e) => setUserToEdit({ ...userToEdit, password: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
@@ -375,8 +425,8 @@ function UserManagement() {
                     onChange={handleRoleChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   >
-                    <option value="Admin">Admin</option>
-                    <option value="Educator">Educator</option>
+                    <option value="admin">admin</option>
+                    <option value="educator">educator</option>
                   </select>
                 </div>
                 <div className="flex justify-between mt-6">
