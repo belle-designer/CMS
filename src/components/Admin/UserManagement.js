@@ -106,7 +106,29 @@ function UserManagement() {
     setIsModalOpen(true);
   };
 
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch('http://localhost:5005/api/deleteUsers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+  
+      const data = await response.json();
+      console.log('User deleted:', data); // Handle the response data as needed
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   const confirmDelete = () => {
+    deleteUser(rowToDelete);
     setUsers(users.filter((user) => user.id !== rowToDelete));
     setIsModalOpen(false);
     setRowToDelete(null);
@@ -174,20 +196,40 @@ function UserManagement() {
     setIsPopupVisible(false);
   };
 
+  const addUser = async (user) => {
+    try {
+      const response = await fetch('http://localhost:5005/api/addUsers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to add user');
+      }
+  
+      const data = await response.json();
+      console.log('User added:', data); // Handle the response data as needed
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
       console.log('Form submitted successfully:', formData);
   
       const newUser = {
-        id: users.length + 1,
         name: formData.name,
         email: formData.email,
         username: formData.username,
         password: formData.password,
         role: role,
       };
-  
+      addUser(newUser);
       setUsers([...users, newUser]);
   
       handleCancel();

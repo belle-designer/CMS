@@ -73,6 +73,31 @@ app.put('/api/updateUser', async (req, res) => {
   );
 });
 
+app.post('/api/addUsers', (req, res) => {
+  const { name, email, username, password, role } = req.body;
+
+  // Using prepared statements to avoid SQL injection
+  const query = `INSERT INTO users (name, email, username, password, role) VALUES (?, ?, ?, ?, ?)`;
+
+  // Perform the query with the provided values
+  db.query(query, [name, email, username, password, role], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    // Send the results back to the client if the query is successful
+    res.status(200).json({ message: 'User added successfully', results });
+  });
+});
+
+
+app.post('/api/deleteUsers', (req, res) =>{
+  const userId = req.body.userId;
+  db.query(`DELETE FROM users where id = ${userId}`);
+  if (err) {
+    return res.status(500).json({ error: 'Database error' });
+  }
+  res.status(200).json(results);
+});
 
 app.get('/api/getUsers', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
