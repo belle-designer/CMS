@@ -49,6 +49,23 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.post('/api/getHistory', async (req, res) => {
+  const historyId = req.body.user.history_id;
+  db.query(
+    `SELECT * FROM history where course_id = ?`,
+    [historyId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'No user found with the given ID' });
+      }
+      res.status(200).json({result});
+    }
+  );
+});
+
 app.put('/api/updateUser', async (req, res) => {
   const { name, email, username, password, role, id } = req.body; // Get user ID and new role from the request body
   hashedPass = await hashPassword(password);
@@ -86,6 +103,16 @@ app.post('/api/addUsers', (req, res) => {
     }
     // Send the results back to the client if the query is successful
     res.status(200).json({ message: 'User added successfully', results });
+  });
+});
+
+app.get('/api/getCourseManagement', (req, res) => {
+  const query = 'SELECT * FROM course_management';  // Adjust this query as per your database schema
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    res.json(results);
   });
 });
 

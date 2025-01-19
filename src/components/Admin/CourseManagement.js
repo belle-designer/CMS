@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function CourseManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,83 +9,103 @@ function CourseManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [users, setUsers] = useState([]);
+  const [activities, setActivities] = useState([]);
 
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      course: 'Mathematics',
-      type: "Material",
-      description: 'A course on advanced mathematics.',
-      objectives: 'To improve problem-solving skills.',
-      attachment: 'Algebra_Notes.pdf',
-      topic: 'Algebra and Geometry',
-      activities: [
-        { activity: 'Created an item', date: '2025-01-05' },
-        { activity: 'Edited an item', date: '2025-01-06' },
-        { activity: 'Renamed an item', date: '2025-01-07' }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      course: 'Science',
-      type: "Material",
-      description: 'A course on scientific principles.',
-      objectives: 'To understand basic physics and chemistry.',
-      attachment: 'Science_Lab_Manual.pdf',
-      topic: 'Physics and Chemistry',
-      activities: [
-        { activity: 'Created an item', date: '2025-01-01' },
-        { activity: 'Edited an item', date: '2025-01-02' }
-      ]
-    },
-    {
-      id: 3,
-      name: 'Mark Johnson',
-      course: 'History',
-      type: "Material",
-      description: 'A course on world history.',
-      objectives: 'To learn about major historical events and figures.',
-      attachment: 'World_History.pdf',
-      topic: 'World War II History',
-      activities: [
-        { activity: 'Created an item', date: '2025-01-03' },
-        { activity: 'Added notes', date: '2025-01-04' }
-      ]
-    },
-    {
-      id: 4,
-      name: 'Emily Davis',
-      course: 'Literature',
-      type: "Material",
-      description: 'A course on classical literature.',
-      objectives: 'To read and analyze classic literary works.',
-      attachment: 'Literary_Analysis.pdf',
-      topic: 'Shakespearean Plays',
-      activities: [
-        { activity: 'Created an item', date: '2025-01-08' },
-        { activity: 'Edited an item', date: '2025-01-09' },
-        { activity: 'Renamed an item', date: '2025-01-10' }
-      ]
-    },
-    {
-      id: 5,
-      name: 'James Brown',
-      course: 'Computer Science',
-      type: "Material",
-      description: 'A course on data structures and algorithms.',
-      objectives: 'To learn how to solve problems using algorithms and data structures.',
-      attachment: 'Data_Structures.pdf',
-      topic: 'Data Structures and Algorithms',
-      activities: [
-        { activity: 'Created an item', date: '2025-01-02' },
-        { activity: 'Edited an item', date: '2025-01-04' },
-        { activity: 'Renamed an item', date: '2025-01-06' },
-        { activity: 'Added new content', date: '2025-01-07' }
-      ]
-    }
-  ]);
+  useEffect(() => {
+    fetch('http://localhost:5005/api/getCourseManagement')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setUsers(data);
+        // setLoading(false);
+      })
+      // .catch((error) => {
+      //   // setError(error.message);
+      //   // setLoading(false);
+      // });
+  }, []);
+
+  // const [users, setUsers] = useState([
+  //   {
+  //     id: 1,
+  //     name: 'John Doe',
+  //     course: 'Mathematics',
+  //     type: "Material",
+  //     description: 'A course on advanced mathematics.',
+  //     objectives: 'To improve problem-solving skills.',
+  //     attachment: 'Algebra_Notes.pdf',
+  //     topic: 'Algebra and Geometry',
+  //     activities: [
+  //       { activity: 'Created an item', date: '2025-01-05' },
+  //       { activity: 'Edited an item', date: '2025-01-06' },
+  //       { activity: 'Renamed an item', date: '2025-01-07' }
+  //     ]
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Jane Smith',
+  //     course: 'Science',
+  //     type: "Material",
+  //     description: 'A course on scientific principles.',
+  //     objectives: 'To understand basic physics and chemistry.',
+  //     attachment: 'Science_Lab_Manual.pdf',
+  //     topic: 'Physics and Chemistry',
+  //     activities: [
+  //       { activity: 'Created an item', date: '2025-01-01' },
+  //       { activity: 'Edited an item', date: '2025-01-02' }
+  //     ]
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Mark Johnson',
+  //     course: 'History',
+  //     type: "Material",
+  //     description: 'A course on world history.',
+  //     objectives: 'To learn about major historical events and figures.',
+  //     attachment: 'World_History.pdf',
+  //     topic: 'World War II History',
+  //     activities: [
+  //       { activity: 'Created an item', date: '2025-01-03' },
+  //       { activity: 'Added notes', date: '2025-01-04' }
+  //     ]
+  //   },
+  //   {
+  //     id: 4,
+  //     name: 'Emily Davis',
+  //     course: 'Literature',
+  //     type: "Material",
+  //     description: 'A course on classical literature.',
+  //     objectives: 'To read and analyze classic literary works.',
+  //     attachment: 'Literary_Analysis.pdf',
+  //     topic: 'Shakespearean Plays',
+  //     activities: [
+  //       { activity: 'Created an item', date: '2025-01-08' },
+  //       { activity: 'Edited an item', date: '2025-01-09' },
+  //       { activity: 'Renamed an item', date: '2025-01-10' }
+  //     ]
+  //   },
+  //   {
+  //     id: 5,
+  //     name: 'James Brown',
+  //     course: 'Computer Science',
+  //     type: "Material",
+  //     description: 'A course on data structures and algorithms.',
+  //     objectives: 'To learn how to solve problems using algorithms and data structures.',
+  //     attachment: 'Data_Structures.pdf',
+  //     topic: 'Data Structures and Algorithms',
+  //     activities: [
+  //       { activity: 'Created an item', date: '2025-01-02' },
+  //       { activity: 'Edited an item', date: '2025-01-04' },
+  //       { activity: 'Renamed an item', date: '2025-01-06' },
+  //       { activity: 'Added new content', date: '2025-01-07' }
+  //     ]
+  //   }
+  // ]);
   
   
   
@@ -97,9 +117,48 @@ function CourseManagement() {
   };
 
   const openHistoryModal = (user) => {
-    setSelectedUser(user);
+    setSelectedUser(user); // Set the user without activities first.
+  
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch('http://localhost:5005/api/getHistory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user }), // Send user data in the request body
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to fetch history');
+        }
+  
+        const data = await response.json(); // Assuming data.result contains the array of activities
+        setSelectedUser((prevUser) => ({
+          ...prevUser,
+          activities: data.result || [], // Ensure activities is at least an empty array
+        }));
+      } catch (err) {
+        console.error('Error fetching history:', err.message);
+      }
+    };
+  
+    fetchHistory();
     setIsModalOpen(true);
   };
+
+  const formatDate = (date) => {
+    const dateObj = new Date(date);
+
+// Format the date as desired (e.g., "January 20, 2025")
+const formattedDate = dateObj.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+return formattedDate;
+  };
+
 
   const openApproveModal = (course) => {
     setSelectedCourse(course);
@@ -152,7 +211,7 @@ function CourseManagement() {
             <tbody>
               {currentData.map((user) => (
                 <tr key={user.id}>
-                  <td className="py-3 px-4 text-gray-600 truncate w-1/4 max-w-xs">{user.name}</td>
+                  <td className="py-3 px-4 text-gray-600 truncate w-1/4 max-w-xs">{user.educator}</td>
                   <td className="py-3 px-4 text-gray-600 w-1/4">{user.course}</td>
                   <td className="py-3 px-4 text-gray-600 w-1/4">
                     <button onClick={() => openHistoryModal(user)} className="text-blue-500 hover:underline">
@@ -194,29 +253,42 @@ function CourseManagement() {
           </div>
         )}
 
-        {isModalOpen && selectedUser && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
-              <h3 className="text-lg font-semibold mb-4">History for {selectedUser.name}</h3>
-              <ul className="text-left mb-4">
-                {selectedUser.activities.map((activity, index) => (
-                  <li key={index} className="text-gray-600">
-                    {activity.activity} - {activity.date}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+{isModalOpen && selectedUser && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
+      <h3 className="text-lg font-semibold mb-4">History for {selectedUser.name}</h3>
+      <ul className="text-left mb-4">
+      {selectedUser.activities && selectedUser.activities.length > 0 ? (
+  selectedUser.activities.map((activity, index) => {
+    // Format the date
+    const formattedDate = new Date(activity.date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    return (
+      <li key={index} className="text-gray-600">
+        {activity.activity} - {formattedDate}
+      </li>
+    );
+  })
+) : (
+  <p className="text-gray-500">Loading activities...</p>
+)}
+      </ul>
+      <div className="flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(false)}
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
         {isModalOpen && selectedCourse && !isDeclineModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
