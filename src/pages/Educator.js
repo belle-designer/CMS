@@ -58,8 +58,21 @@ function Educator() {
     setActiveSection(section);
   };
 
+  const checkEducatorAccess = () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const role = localStorage.getItem('role');
+    
+    if (!isLoggedIn || role !== 'educator') {
+      // If the user is not logged in or not an admin, redirect to login
+      window.location.href = '/';  // Or you can redirect to any other page
+    }
+  };
+  
+  checkEducatorAccess();  // Call this when the admin page loads
+
   const handleLogOut = () => {
-    console.log("Logging out...");
+    localStorage.setItem('isLoggedIn', 'false');
+    checkEducatorAccess();
   };
 
   return (

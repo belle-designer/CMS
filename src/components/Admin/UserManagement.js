@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function UserManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,16 +9,46 @@ function UserManagement() {
   const [role, setRole] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', username: 'johndoe', password: '12345', role: 'Educator' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', username: 'janesmith', password: '12345', role: 'Admin' },
-    { id: 3, name: 'Emily Johnson', email: 'emily@example.com', username: 'emilyj', password: '12345', role: 'Educator' },
-    { id: 4, name: 'Michael Brown', email: 'michael@example.com', username: 'mikeb', password: '12345', role: 'Admin' },
-    { id: 5, name: 'Sarah Davis', email: 'sarah@example.com', username: 'sarahd', password: '12345', role: 'Educator' },
-    { id: 6, name: 'David Wilson', email: 'david@example.com', username: 'davidw', password: '12345', role: 'Admin' },
-    { id: 7, name: 'Laura Lee', email: 'laura@example.com', username: 'laural', password: '12345', role: 'Educator' },
-    { id: 8, name: 'James Kim', email: 'james@example.com', username: 'jamesk', password: '12345', role: 'Admin' },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [refresh, setRefresh] = useState(false); // State to trigger refresh
+    useEffect(() => {
+      const fetchUsers = async () => {
+        try {
+          const response = await fetch('http://localhost:5005/api/getUsers');
+          if (!response.ok) {
+            throw new Error('Failed to fetch users');
+          }
+          const data = await response.json();
+          setUsers(data); // Update state with fetched data
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      };
+  
+      fetchUsers();
+    }, [refresh]); // Empty dependency array ensures this runs once on mount
+
+    const updateUser = async (userData) => {
+      console.log("hi", userData);
+      try {
+        const response = await fetch('http://localhost:5005/api/updateUser', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        });
+    
+        const data = await response.json();
+        if (response.ok) {
+          console.log('User updated successfully:', data.message);
+        } else {
+          console.error('Error updating user:', data.error || data.message);
+        }
+      } catch (error) {
+        console.error('Request failed:', error);
+      }
+    };
 
   const handleEditClick = (user) => {
     setUserToEdit(user);
@@ -30,14 +60,38 @@ function UserManagement() {
     setRole(e.target.value);
   };
 
-  const confirmEdit = () => {
-    const updatedUsers = users.map((user) =>
-      user.id === userToEdit.id ? { ...user, role: role } : user
-    );
-    setUsers(updatedUsers);
-    setIsPopupVisible(false);
-    setUserToEdit(null);
+  const handleRefresh = () => {
+    setRefresh((prev) => !prev); // Toggle `refresh` to trigger useEffect
   };
+
+  const confirmEdit = async () => {
+    try {
+      // Create an updated user object with the new role
+      const updatedUser = { ...userToEdit, role: role };
+  
+      // Update the user on the backend
+      await updateUser(updatedUser); // Ensure this call completes before proceeding
+  
+      // Update the local users state
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user // Update only the relevant user
+        )
+      );
+  
+      // Trigger a re-fetch or refresh logic
+      setRefresh((prev) => !prev);
+  
+      // Close the popup and reset the userToEdit state
+      setIsPopupVisible(false);
+      setUserToEdit(null);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      // Optional: Add error handling or show an error message to the user
+    }
+  };
+  
+
 
   const cancelEdit = () => {
     setIsPopupVisible(false);
@@ -52,7 +106,29 @@ function UserManagement() {
     setIsModalOpen(true);
   };
 
+  const deleteUser = async (userId) => {
+    try {
+      const response = await fetch('http://localhost:5005/api/deleteUsers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+  
+      const data = await response.json();
+      console.log('User deleted:', data); // Handle the response data as needed
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
   const confirmDelete = () => {
+    deleteUser(rowToDelete);
     setUsers(users.filter((user) => user.id !== rowToDelete));
     setIsModalOpen(false);
     setRowToDelete(null);
@@ -120,26 +196,62 @@ function UserManagement() {
     setIsPopupVisible(false);
   };
 
+  const addUser = async (user) => {
+    try {
+      const response = await fetch('http://localhost:5005/api/addUsers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to add user');
+      }
+  
+      const data = await response.json();
+      console.log('User added:', data); // Handle the response data as needed
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
       console.log('Form submitted successfully:', formData);
   
       const newUser = {
-        id: users.length + 1,
         name: formData.name,
         email: formData.email,
         username: formData.username,
         password: formData.password,
         role: role,
       };
-  
+      addUser(newUser);
       setUsers([...users, newUser]);
   
       handleCancel();
     }
   };
-
+  const [adminNumber, setAdminNumber] = useState(0);
+  const [educatorNumber, setEducatorNumber] = useState(0);
+  const getNumberOfUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:5005/api/getNumberofUsers'); // Call the backend API
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      const data = await response.json();
+      setAdminNumber(data.users.admins);
+      setEducatorNumber(data.users.educators);
+      // Do something with the data
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  };
+  getNumberOfUsers();
 
   return (
     <div className="user-management">
@@ -156,7 +268,7 @@ function UserManagement() {
           </div>
 
           <div className="flex flex-row justify-between items-start">
-            <h1 className="text-7xl pt-4 pb-4">49</h1>
+            <h1 className="text-7xl pt-4 pb-4">{educatorNumber}</h1>
             <button className="mt-2 justify-start" onClick={() => togglePopup('educator')}>
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
               <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
@@ -182,7 +294,7 @@ function UserManagement() {
           </div>
 
           <div className='flex flex-row justify-between items-start'>
-            <h1 className="text-7xl pt-4 pb-4">03</h1>
+            <h1 className="text-7xl pt-4 pb-4">{adminNumber}</h1>
             <button className="mt-2 justify-start" onClick={() => togglePopup('admin')}>
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
               <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
@@ -308,39 +420,43 @@ function UserManagement() {
             <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
               <h3 className="text-lg font-semibold mb-4">Edit User</h3>
               <form onSubmit={(e) => e.preventDefault()}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Name:</label>
-                  <input
-                    type="text"
-                    value={userToEdit.name}
-                    disabled
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Email:</label>
-                  <input
-                    type="email"
-                    value={userToEdit.email}
-                    disabled
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">Username:</label>
-                  <input
-                    type="text"
-                    value={userToEdit.username}
-                    disabled
-                    className="w-full p-2 border border-gray-300 rounded-md"
-                  />
-                </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Name:</label>
+                <input
+                  type="text"
+                  value={userToEdit.name || ''} // Default value if userToEdit.password is undefined
+                  disabled
+                  // onChange={(e) => setUserToEdit({ ...userToEdit, name: e.target.value })} // Update the state with the new password
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Email:</label>
+                <input
+                  type="text"
+                  value={userToEdit.email || ''} // Default value if userToEdit.password is undefined
+                  disabled
+                  // onChange={(e) => setUserToEdit({ ...userToEdit, email: e.target.value })} // Update the state with the new password
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Username:</label>
+                <input
+                  type="text"
+                  value={userToEdit.username || ''} // Default value if userToEdit.password is undefined
+                  disabled
+                  // onChange={(e) => setUserToEdit({ ...userToEdit, username: e.target.value })} // Update the state with the new password
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">Password:</label>
                   <input
                     type="password"
                     value={userToEdit.password}
                     disabled
+                    onChange={(e) => setUserToEdit({ ...userToEdit, password: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
@@ -351,8 +467,8 @@ function UserManagement() {
                     onChange={handleRoleChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   >
-                    <option value="Admin">Admin</option>
-                    <option value="Educator">Educator</option>
+                    <option value="admin">admin</option>
+                    <option value="educator">educator</option>
                   </select>
                 </div>
                 <div className="flex justify-between mt-6">

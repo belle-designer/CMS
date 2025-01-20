@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ShowIcon from "../assets/show.svg";
 import HideIcon from "../assets/hide.svg";
 import AboutImage from "../assets/about.jpg"; // Import the background image
@@ -37,6 +37,34 @@ function Reset() {
       specialChar: /[@$!%*?&]/.test(password),
     });
   };
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const email = queryParams.get('email');
+  const resetPassword = async (email, newPassword) => {
+    try {
+      const response = await fetch('http://localhost:5005/api/resetPassword', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password: newPassword }), // Send email and new password
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log('Password reset successfully:', data.message);
+        alert('Password reset successfully!');
+      } else {
+        console.error('Failed to reset password:', data.message);
+        alert(data.message || 'Failed to reset password. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during password reset:', error);
+      alert('An error occurred. Please try again later.');
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,15 +91,17 @@ function Reset() {
       return;
     }
 
+    resetPassword(email, newPassword);
     setError("");
     setSuccessMessage("Your password has been successfully reset!");
     setNewPassword("");
     setConfirmPassword("");
+    
   };
-
+  
   const handleBackToLogin = () => {
     navigate("/");
-  };
+  }; 
 
   return (
     <div

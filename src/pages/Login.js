@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import hide from "../assets/hide.svg";
 import show from "../assets/show.svg";
 import backgroundImage from "../assets/preview.jpg";
@@ -8,6 +8,8 @@ import logo from "../assets/cvsu.png";
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleForgotPassword = (e) => {
     e.preventDefault();
@@ -17,6 +19,43 @@ function Login() {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:5005/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+      localStorage.setItem('role', data.role);
+      localStorage.setItem('isLoggedIn', 'true'); // Set a flag for login status
+      if (response.ok) {
+        console.log('Login successful!', data);
+        alert(`Login successful! Role: ${data.role}`);
+        if (data.role === 'admin'){
+          window.location.href = '/admin';
+        }
+       else if (data.role === 'educator'){
+          window.location.href = '/educator';
+        } 
+      }
+      else {
+        console.error('Login failed:', data.message);
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('Something went wrong. Please try again.');
+    }
+  };
+  
+  
+  // Example usage:
+  // login('admin@example.com', 'password123');
 
   return (
     <div className="h-screen flex">
@@ -43,6 +82,7 @@ function Login() {
                 id="email"
                 className="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                 placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="mb-6">
@@ -55,6 +95,7 @@ function Login() {
                   id="password"
                   className="w-full p-4 border rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="Enter your password"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
@@ -72,8 +113,9 @@ function Login() {
 
             <div className="border-t border-white mt-32 mb-10"></div>
             <button
-              type="submit"
+              type="button"
               className="w-full bg-white text-green-700 py-3 rounded-lg font-bold hover:bg-gray-200 transition-colors"
+              onClick={() => login(email, password)}
             >
               Sign In
             </button>
