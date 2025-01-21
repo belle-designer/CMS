@@ -134,9 +134,13 @@ function CourseManagement() {
         }
   
         const data = await response.json(); // Assuming data.result contains the array of activities
+        console.log(data.result);
+        
         setSelectedUser((prevUser) => ({
           ...prevUser,
-          activities: data.result || [], // Ensure activities is at least an empty array
+          activities: data.result || [], // Ensure activities is at least an empty 
+          name : user.educator
+          
         }));
       } catch (err) {
         console.error('Error fetching history:', err.message);
@@ -269,7 +273,7 @@ return formattedDate;
 
     return (
       <li key={index} className="text-gray-600">
-        {activity.activity} - {formattedDate}
+        {activity.action} - {formattedDate}
       </li>
     );
   })

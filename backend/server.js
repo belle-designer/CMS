@@ -62,6 +62,7 @@ app.post('/api/getHistory', async (req, res) => {
         return res.status(404).json({ message: 'No user found with the given ID' });
       }
       res.status(200).json({result});
+      console.log(result);
     }
   );
 });
