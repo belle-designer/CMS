@@ -67,6 +67,71 @@ app.post('/api/getHistory', async (req, res) => {
   );
 });
 
+app.get('/api/getCourses', async (req, res) => {
+  try {
+    db.query('SELECT * FROM courses', (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+const multer = require('multer');
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage(); // Or use diskStorage for saving files to disk
+const upload = multer({ storage });
+
+// Route to handle form submission
+app.post('/api/addCourses', upload.single('attachment'), async (req, res) => {
+  const { topics, course, description, objectives, educator } = req.body;
+  const attachment = req.file ? req.file.originalname : null; // Use req.file for the uploaded file
+
+  console.log("Form Data:", req.body); // Text fields
+  console.log("Uploaded File:", req.file); // File details
+
+  try {
+    db.query(
+      'INSERT INTO courses (course_name, course_topics, status, educator_name, description, objectives, attachment) VALUES (?, ?, "In Progress", ?, ?, ?, ?)',
+      [course, topics, educator, description, objectives, attachment],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Database error' });
+        }
+        res.status(200).json(result);
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/deleteCourse', async (req, res) => {
+  const { course_name } = req.body; // Get course_name from the body
+  console.log(course_name);
+  try {
+    // Use parameterized query to prevent SQL injection
+    db.query(
+      `DELETE FROM courses WHERE course_name = ?`,
+      [course_name], // This array will prevent SQL injection
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Database error' });
+        }
+        res.status(200).json({ message: 'Course deleted successfully', result });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
 app.put('/api/updateUser', async (req, res) => {
   const { name, email, username, password, role, id } = req.body; // Get user ID and new role from the request body
   hashedPass = await hashPassword(password);

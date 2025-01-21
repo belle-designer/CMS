@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function MyCourse() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,8 +15,10 @@ function MyCourse() {
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState([]);
   const itemsPerPage = 10;
+  const [todo, setTodo] = useState('');
 
   const handleCreateClick = () => {
+    setConfirmationAction('add');
     setIsModalOpen(true); 
     setIsEditing(false); 
     setCourseName('');
@@ -33,26 +35,82 @@ function MyCourse() {
   const handleSaveClick = (e) => {
     e.preventDefault(); 
     setConfirmationMessage('Are you sure you want to save?');
-    setConfirmationAction('save');
+    setConfirmationAction('add');
     setIsConfirmationModalOpen(true); 
   };
 
   const handleDeleteClick = () => {
     setConfirmationMessage('Are you sure you want to delete?');
     setConfirmationAction('delete');
+
     setIsConfirmationModalOpen(true); 
   };
 
-  const confirmAction = () => {
-    if (confirmationAction === 'save' || confirmationAction === 'delete') {
-      
-      setIsModalOpen(false);
-      setIsConfirmationModalOpen(false); 
+  const confirmAction = async () => {
+    // console.log(topics);
+    // console.log(courses);
+    console.log(courseName);
+    const payload = new FormData();
+    payload.append("topics", topics);
+    payload.append("course", courseName);
+    payload.append("description", description);
+    payload.append("objectives", objectives);
+    payload.append("attachment", attachment);
+    payload.append("educator", "educator name");
+    if (confirmationAction == 'add'){
+      try {
+        const response = await fetch("http://localhost:5005/api/addCourses", {
+          method: "POST",
+          body: payload,
+        });
+  
+        if (response.ok) {
+          const result = await response.json();
+          // setMessage("Course added successfully!");
+          console.log(result); // Handle the response as needed
+        } else {
+          const errorData = await response.json();
+          // setMessage(`Error: ${errorData.error}`);
+        }
+      } catch (error) {
+        console.error("Error adding course:", error);
+        // setMessage("An unexpected error occurred.");
+      };
     }
+    else if(confirmationAction == 'edit'){
+      console.log("is edditing");
+    }else{
+      console.log("is deleting", payload);
+      try {
+        const response = await fetch("http://localhost:5005/api/deleteCourse", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Specify content type as JSON
+          },
+          body: JSON.stringify({ course_name: courseName }), // Send the course name in the body
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to delete course");
+        }
+  
+        const result = await response.json();
+        console.log(result); // Log the result if needed
+      } catch (error) {
+        console.error("Error deleting course:", error);
+      }
+    }
+    setConfirmationAction('');
+    setIsModalOpen(false);
+    setIsConfirmationModalOpen(false); 
+    handleRefresh();
+    
   };
   
 
   const handleEditClick = (existingCourseName, existingTopics, existingDescription, existingObjectives, existingAttachment) => {
+    setConfirmationMessage('Are you sure you want to save edit?');
+    setConfirmationAction('edit');
     setIsModalOpen(true); 
     setIsEditing(true); 
     setCourseName(existingCourseName); 
@@ -87,6 +145,52 @@ function MyCourse() {
   const totalPages = Math.ceil(users.length / itemsPerPage);
   const currentData = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  const [courses, setCourses] = useState([]);
+  // const courses = [
+  //   {
+  //     name: "Pythosdasdasdics",
+  //     description: "Variables, Loops, Lists",
+  //     status: "In Progress",
+  //     actions: {
+  //       save: () => { console.log('Save clicked for Python Basics'); },
+  //       edit: () => { console.log('Edit clicked for Python Basics'); },
+  //       delete: () => { console.log('Delete clicked for Python Basics'); }
+  //     }
+  //   },
+  //   {
+  //     name: "JavaScript Basics",
+  //     description: "Functions, Arrays, Objects",
+  //     status: "Completed",
+  //     actions: {
+  //       save: () => { console.log('Save clicked for JavaScript Basics'); },
+  //       edit: () => { console.log('Edit clicked for JavaScript Basics'); },
+  //       delete: () => { console.log('Delete clicked for JavaScript Basics'); }
+  //     }
+  //   },
+  // ];
+
+  const [refresh, setRefresh] = useState(false); // State to trigger refresh
+      useEffect(() => {
+        const fetchUsers = async () => {
+          try {
+            const response = await fetch('http://localhost:5005/api/getCourses');
+            if (!response.ok) {
+              throw new Error('Failed to fetch courses');
+            }
+            const data = await response.json();
+            console.log(data);
+            setCourses(data); // Update state with fetched data
+          } catch (error) {
+            console.error('Error fetching courses:', error);
+          }
+        };
+    
+        fetchUsers();
+      }, [refresh]); // Empty dependency array ensures this runs once on mount
+      const handleRefresh = () => {
+        setRefresh((prev) => !prev); // Toggle the state to trigger useEffect
+      };
+
   return (
     <div className="p-6">
       {}
@@ -107,23 +211,24 @@ function MyCourse() {
 
       {}
       <div className='rounded-lg bg-white'>
-      <table className="table-auto text-center justify-center items-center w-full border-collaps">
-        <thead>
-          <tr className="border-b-2 border-black">
-            <th className="px-4 py-2">COURSE</th>
-            <th className="px-4 py-2">TOPICS</th>
-            <th className="px-4 py-2">STATUS</th>
-            <th className="px-4 py-2">ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody className="border-b-2 border-black pb-4">
-          <tr>
-            <td className="px-4 py-2">Python Basics</td>
-            <td className="px-4 py-2">Variables, Loops, Lists</td>
-            <td className="px-4 py-2">In Progress</td>
+      <table className="table-auto text-center justify-center items-center w-full border-collapse">
+      <thead>
+        <tr className="border-b-2 border-black">
+          <th className="px-4 py-2">COURSE</th>
+          <th className="px-4 py-2">TOPICS</th>
+          <th className="px-4 py-2">STATUS</th>
+          <th className="px-4 py-2">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody className="border-b-2 border-black pb-4">
+        {courses.map((course, index) => (
+          <tr key={index}>
+            <td className="px-4 py-2">{course.course_name}</td>
+            <td className="px-4 py-2">{course.course_topics}</td>
+            <td className="px-4 py-2">{course.status}</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {}
-              <svg
+              {/* Save Icon */}
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
                 viewBox="0 -960 960 960"
@@ -133,177 +238,39 @@ function MyCourse() {
                 className="cursor-pointer"
               >
                 <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
-              </svg>
+              </svg> */}
 
-              {}
-              <svg
+              {/* Edit Icon */}
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 height="24px"
                 viewBox="0 -960 960 960"
                 width="24px"
                 fill="#000000"
-                onClick={() => handleEditClick("Python Basics", "Variables, Loops, Lists", "Learn the basics of Python programming.", "Understand syntax, loops, and lists.", "N/A")}
+                onClick={handleEditClick}
                 className="cursor-pointer"
               >
                 <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
-              </svg>
+              </svg> */}
 
-              {}
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
-              <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+              {/* Delete Icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#000000"
+                onClick={handleDeleteClick}
+                className="cursor-pointer"
+              >
+                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
             </td>
           </tr>
-          <tr>
-            <td className="px-4 py-2">Python Basics</td>
-            <td className="px-4 py-2">Variables, Loops, Lists</td>
-            <td className="px-4 py-2">In Progress</td>
-            <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={handleSaveClick}
-                className="cursor-pointer"
-              >
-                <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
-              </svg>
+        ))}
+      </tbody>
+    </table>
 
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={() => handleEditClick("Python Basics", "Variables, Loops, Lists", "Learn the basics of Python programming.", "Understand syntax, loops, and lists.", "N/A")}
-                className="cursor-pointer"
-              >
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
-              </svg>
-
-              {}
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
-              <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-              </svg>
-            </td>
-          </tr>
-          <tr>
-            <td className="px-4 py-2">Python Basics</td>
-            <td className="px-4 py-2">Variables, Loops, Lists</td>
-            <td className="px-4 py-2">In Progress</td>
-            <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={handleSaveClick}
-                className="cursor-pointer"
-              >
-                <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
-              </svg>
-
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={() => handleEditClick("Python Basics", "Variables, Loops, Lists", "Learn the basics of Python programming.", "Understand syntax, loops, and lists.", "N/A")}
-                className="cursor-pointer"
-              >
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
-              </svg>
-
-              {}
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
-              <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-              </svg>
-            </td>
-          </tr>
-          <tr>
-            <td className="px-4 py-2">Python Basics</td>
-            <td className="px-4 py-2">Variables, Loops, Lists</td>
-            <td className="px-4 py-2">In Progress</td>
-            <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={handleSaveClick}
-                className="cursor-pointer"
-              >
-                <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
-              </svg>
-
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={() => handleEditClick("Python Basics", "Variables, Loops, Lists", "Learn the basics of Python programming.", "Understand syntax, loops, and lists.", "N/A")}
-                className="cursor-pointer"
-              >
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
-              </svg>
-
-              {}
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
-              <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-              </svg>
-            </td>
-          </tr>
-          <tr>
-            <td className="px-4 py-2">Python Basics</td>
-            <td className="px-4 py-2">Variables, Loops, Lists</td>
-            <td className="px-4 py-2">In Progress</td>
-            <td className="px-4 py-2 flex items-center justify-center space-x-4">
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={handleSaveClick}
-                className="cursor-pointer"
-              >
-                <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
-              </svg>
-
-              {}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="24px"
-                viewBox="0 -960 960 960"
-                width="24px"
-                fill="#000000"
-                onClick={() => handleEditClick("Python Basics", "Variables, Loops, Lists", "Learn the basics of Python programming.", "Understand syntax, loops, and lists.", "N/A")}
-                className="cursor-pointer"
-              >
-                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
-              </svg>
-
-              {}
-             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick = {handleDeleteClick} className='cursur-pointer'>
-              <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-              </svg>
-            </td>
-          </tr>
-        </tbody>
-      </table>
 
       <div className="border-black flex justify-center">
         <div className="flex space-x-2 justify-center items-center pt-4 pb-4">
@@ -347,7 +314,7 @@ function MyCourse() {
       </h2>
       <form onSubmit={handleSaveClick}>
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Topic (Required):</label>
+          <label className="block text-gray-700 font-medium mb-2">Topics (Required):</label>
           <input
             type="text"
             placeholder=""
