@@ -13,7 +13,7 @@ function CourseManagement() {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5005/api/getCourseManagement')
+    fetch('http://localhost:5005/api/getCourses')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -215,8 +215,8 @@ return formattedDate;
             <tbody>
               {currentData.map((user) => (
                 <tr key={user.id}>
-                  <td className="py-3 px-4 text-gray-600 truncate w-1/4 max-w-xs">{user.educator}</td>
-                  <td className="py-3 px-4 text-gray-600 w-1/4">{user.course}</td>
+                  <td className="py-3 px-4 text-gray-600 truncate w-1/4 max-w-xs">{user.educator_name}</td>
+                  <td className="py-3 px-4 text-gray-600 w-1/4">{user.course_name}</td>
                   <td className="py-3 px-4 text-gray-600 w-1/4">
                     <button onClick={() => openHistoryModal(user)} className="text-blue-500 hover:underline">
                       View History
@@ -260,7 +260,7 @@ return formattedDate;
 {isModalOpen && selectedUser && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
-      <h3 className="text-lg font-semibold mb-4">History for {selectedUser.name}</h3>
+      <h3 className="text-lg font-semibold mb-4">History for {selectedUser.educator_name}</h3>
       <ul className="text-left mb-4">
       {selectedUser.activities && selectedUser.activities.length > 0 ? (
   selectedUser.activities.map((activity, index) => {

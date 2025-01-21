@@ -50,9 +50,10 @@ const comparePassword = async (password, hashedPassword) => {
 };
 
 app.post('/api/getHistory', async (req, res) => {
-  const historyId = req.body.user.history_id;
+  const historyId = req.body.user.id;
+  console.log(historyId);
   db.query(
-    `SELECT * FROM history where course_id = ?`,
+    `SELECT * FROM course_history where course_id = ?`,
     [historyId],
     (err, result) => {
       if (err) {
