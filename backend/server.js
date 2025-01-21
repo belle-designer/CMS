@@ -89,25 +89,41 @@ app.put('/api/updateUser', async (req, res) => {
     }
   );
 });
-const y = async () => {
-  x = await hashPassword('qweqweQWE!');
-  console.log(x);
-}
-y();
-app.post('/api/addUsers', async (req, res) => {
-  const { name, email, username, password, role } = req.body;
-  hashedPass = await hashPassword(password);
-  // Using prepared statements to avoid SQL injection
-  const query = `INSERT INTO users (name, email, username, password, role) VALUES (?, ?, ?, ?, ?)`;
-  // Perform the query with the provided values
-  db.query(query, [name, email, username, hashedPass, role], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: 'Database error' });
-    }
-    // Send the results back to the client if the query is successful
-    res.status(200).json({ message: 'User added successfully', results });
+// const y = async (pass) => {
+//   x = await hashPassword(pass);
+//   return x;
+// }
+
+const queryAsync = (query, params) => {
+  return new Promise((resolve, reject) => {
+    db.query(query, params, (err, results) => {
+      if (err) {
+        reject(err);  // Reject on error
+      } else {
+        resolve(results);  // Resolve with results
+      }
+    });
   });
+};
+
+app.post('/api/addUsers', async (req, res) => {
+  const { user } = req.body;
+  console.log(user.name);
+  const hashedPass = await hashPassword(user.password);
+  
+  const query = `INSERT INTO users (name, email, username, password, role) VALUES (?, ?, ?, ?, ?)`;
+
+  try {
+    // Await the database query inside the try-catch block
+    const results = await queryAsync(query, [user.name, user.email, user.username, hashedPass, user.role]);
+    res.status(200).json({ message: 'User added successfully', results });
+  } catch (err) {
+    // Catch any errors, including those from the query
+    console.error("Database error:", err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
+
 
 app.get('/api/getCourseManagement', (req, res) => {
   const query = 'SELECT * FROM course_management';  // Adjust this query as per your database schema
