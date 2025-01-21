@@ -315,7 +315,7 @@ function MyCourse() {
       </h2>
       <form onSubmit={handleSaveClick}>
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Topics (Required):</label>
+          <label className="block text-gray-700 font-medium mb-2">Course:</label>
           <input
             type="text"
             placeholder=""
@@ -325,7 +325,7 @@ function MyCourse() {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Course:</label>
+          <label className="block text-gray-700 font-medium mb-2">Topics (Required):</label>
           <input
             type="text"
             placeholder=""
