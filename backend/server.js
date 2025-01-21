@@ -89,15 +89,18 @@ app.put('/api/updateUser', async (req, res) => {
     }
   );
 });
-
-app.post('/api/addUsers', (req, res) => {
+const y = async () => {
+  x = await hashPassword('qweqweQWE!');
+  console.log(x);
+}
+y();
+app.post('/api/addUsers', async (req, res) => {
   const { name, email, username, password, role } = req.body;
-
+  hashedPass = await hashPassword(password);
   // Using prepared statements to avoid SQL injection
   const query = `INSERT INTO users (name, email, username, password, role) VALUES (?, ?, ?, ?, ?)`;
-
   // Perform the query with the provided values
-  db.query(query, [name, email, username, password, role], (err, results) => {
+  db.query(query, [name, email, username, hashedPass, role], (err, results) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -117,14 +120,22 @@ app.get('/api/getCourseManagement', (req, res) => {
 });
 
 
-app.post('/api/deleteUsers', (req, res) =>{
+app.post('/api/deleteUsers', (req, res) => {
   const userId = req.body.userId;
-  db.query(`DELETE FROM users where id = ${userId}`);
-  if (err) {
-    return res.status(500).json({ error: 'Database error' });
-  }
-  res.status(200).json(results);
+
+  // Use parameterized queries to avoid SQL injection
+  const query = 'DELETE FROM users WHERE id = ?';
+  
+  db.query(query, [userId], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+    
+    // Send back the result of the deletion
+    res.status(200).json({ message: 'User deleted successfully', result });
+  });
 });
+
 
 app.get('/api/getUsers', (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
@@ -230,7 +241,7 @@ app.post('/api/login', async (req, res) => {
         } else {
           res.status(401).json({
             success: false,
-            message: 'Invalid credentials!22',
+            message: 'no match',
           });
         }
       } catch (compareErr) {
