@@ -37,10 +37,10 @@ function Login() {
         console.log('Login successful!', data);
         alert(`Login successful! Role: ${data.role}`);
         if (data.role === 'admin'){
-          window.location.href = '/admin';
+          navigate('/admin', { state: { data } });
         }
        else if (data.role === 'educator'){
-          window.location.href = '/educator';
+          navigate('/educator', { state: { data } });
         } 
       }
       else {

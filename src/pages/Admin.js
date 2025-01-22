@@ -1,8 +1,12 @@
 import React, { useState, Suspense, lazy } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import cvsuImage from '../assets/cvsu.png';
 
 function Admin() {
+  const location = useLocation();
+  const { data } = location.state || {}; // Destructure user data
+  console.log(data);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [viewAssessment, setViewAssessment] = useState(false);
 
