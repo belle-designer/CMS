@@ -165,8 +165,9 @@ return formattedDate;
 
 
   const openApproveModal = (course) => {
-    setSelectedCourse(course);
-    setIsModalOpen(true); 
+    console.log(course);
+    // setSelectedCourse(course);
+    // setIsModalOpen(true); 
   };
 
   const openDeclineModal = (course) => {

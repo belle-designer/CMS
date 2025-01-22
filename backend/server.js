@@ -49,6 +49,39 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.post('/api/sendDataToRepo', async (req, res) => {
+  const historyId = req.body.user.id;
+  console.log(historyId);
+  db.query(
+    ``,
+    [historyId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'No user found with the given ID' });
+      }
+      res.status(200).json({result});
+      console.log(result);
+    }
+  );
+  db.query(
+    `SELECT * FROM course_history where course_id = ?`,
+    [historyId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'No user found with the given ID' });
+      }
+      res.status(200).json({result});
+      console.log(result);
+    }
+  );
+});
+
 app.post('/api/getHistory', async (req, res) => {
   const historyId = req.body.user.id;
   console.log(historyId);
@@ -89,16 +122,16 @@ const upload = multer({ storage });
 
 // Route to handle form submission
 app.post('/api/addCourses', upload.single('attachment'), async (req, res) => {
-  const { topics, course, description, objectives, educator } = req.body;
-  const attachment = req.file ? req.file.originalname : null; // Use req.file for the uploaded file
+  const { topics, course, description, objectives, educator} = req.body;
+  const attachments = req.file ? req.file.originalname : null; // Use req.file for the uploaded file
 
   console.log("Form Data:", req.body); // Text fields
   console.log("Uploaded File:", req.file); // File details
 
   try {
     db.query(
-      'INSERT INTO courses (course_name, course_topics, status, educator_name, description, objectives, attachment) VALUES (?, ?, "In Progress", ?, ?, ?, ?)',
-      [course, topics, educator, description, objectives, attachment],
+      'INSERT INTO courses (course_name, course_topics, status, educator_name, description, objectives, attachment, type) VALUES (?, ?, "In Progress", ?, ?, ?, ?, "Material")',
+      [course, topics, educator, description, objectives, attachments],
       (err, result) => {
         if (err) {
           return res.status(500).json({ error: 'Database error' });

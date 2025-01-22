@@ -10,6 +10,7 @@ function MyCourse() {
   const [description, setDescription] = useState('');
   const [objectives, setObjectives] = useState('');
   const [attachment, setAttachment] = useState('');
+  const [attachments, setAttachments] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,13 +51,14 @@ function MyCourse() {
   const confirmAction = async () => {
     // console.log(topics);
     // console.log(courses);
-    console.log(courseName);
+    // console.log(courseName);
+    console.log(attachments);
     const payload = new FormData();
     payload.append("topics", topics);
     payload.append("course", courseName);
     payload.append("description", description);
     payload.append("objectives", objectives);
-    payload.append("attachment", attachment);
+    payload.append("attachment", attachments);
     payload.append("educator", "educator name");
     if (confirmationAction == 'add'){
       try {
@@ -133,9 +135,11 @@ function MyCourse() {
   const handleFileUploadChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAttachment(file.name);
+      setAttachment(file.name);  // Store the file object
+      setAttachments(file);  // Store the file object
     }
   };
+  
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -368,7 +372,7 @@ function MyCourse() {
               type="file"
               id="fileUploadInput"
               style={{ display: 'none' }}
-              onChange={(e) => setAttachment(e.target.files[0]?.name || '')}
+              onChange={(e) => handleFileUploadChange(e)}
             />
           </div>
         </div>
