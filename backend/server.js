@@ -81,6 +81,18 @@ app.delete('/api/deleteCourseWithHistory/:id', (req, res) => {
   );
 });
 
+app.get('/api/getDataRepo', async (req, res) => {
+  try {
+    db.query('SELECT * FROM data_repo', (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 app.post('/api/sendDataToRepo', async (req, res) => {
   const course = req.body.user.id; // Assuming `req.body.user` contains the course object

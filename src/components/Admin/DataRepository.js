@@ -1,187 +1,205 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function DataRepository() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-  
-    {}
-    const assessments = [
-      {
-        "id": 1,
-        "name": "John Doe",
-        "course": "Mathematics",
-        "type": "Assessment",
-        "date_of_assessment_created": "2025-01-05",
-        "description": "A course on advanced mathematics.",
-        "attachment_file": "Algebra_Notes.pdf",
-        "objectives": "To improve problem-solving skills.",
-        "topic": "Algebra and Geometry",
-        "rubric": {
-          "overall_points": 50,
-          "categories": [
-            {
-              "rubric_category": "Concept Understanding",
-              "points": 20,
-              "description": "Assesses the understanding of mathematical concepts and theories."
-            },
-            {
-              "rubric_category": "Problem Solving",
-              "points": 15,
-              "description": "Evaluates the ability to solve complex mathematical problems."
-            },
-            {
-              "rubric_category": "Application of Theory",
-              "points": 15,
-              "description": "Assesses the ability to apply mathematical theory to real-world problems."
-            }
-          ]
-        }
-      },
-      {
-        "id": 2,
-        "name": "Jane Smith",
-        "course": "Science",
-        "type": "Assessment",
-        "date_of_assessment_created": "2025-01-01",
-        "description": "A course on scientific principles.",
-        "attachment_file": "Science_Lab_Manual.pdf",
-        "objectives": "To understand basic physics and chemistry.",
-        "topic": "Physics and Chemistry",
-        "rubric": {
-          "overall_points": 50,
-          "categories": [
-            {
-              "rubric_category": "Experimentation",
-              "points": 20,
-              "description": "Assesses the ability to design and conduct scientific experiments."
-            },
-            {
-              "rubric_category": "Analysis",
-              "points": 15,
-              "description": "Evaluates the analysis of experimental results and drawing conclusions."
-            },
-            {
-              "rubric_category": "Conclusion Accuracy",
-              "points": 15,
-              "description": "Assesses the accuracy of the conclusions drawn based on the data."
-            }
-          ]
-        }
-      },
-      {
-        "id": 3,
-        "name": "Mark Johnson",
-        "course": "History",
-        "type": "Assessment",
-        "date_of_assessment_created": "2025-01-03",
-        "description": "A course on world history.",
-        "attachment_file": "World_History.pdf",
-        "objectives": "To learn about major historical events and figures.",
-        "topic": "World War II History",
-        "rubric": {
-          "overall_points": 50,
-          "categories": [
-            {
-              "rubric_category": "Historical Knowledge",
-              "points": 20,
-              "description": "Assesses knowledge of historical events, ability to analyze causes and effects, and the ability to consider historical perspectives."
-            },
-            {
-              "rubric_category": "Analysis of Events",
-              "points": 15,
-              "description": "Evaluates the ability to analyze the causes and consequences of key events in history."
-            },
-            {
-              "rubric_category": "Historical Perspective",
-              "points": 15,
-              "description": "Assesses the ability to consider historical perspectives and contextualize events within broader historical frameworks."
-            },
-          ]
-        }
-      }
-    ];
-
-    const materials = [
-      {
-        id: 1,
-        name: 'John Doe',
-        course: 'Mathematics',
-        type: "Material",
-        description: 'A course on advanced mathematics.',
-        objectives: 'To improve problem-solving skills.',
-        attachment: 'Algebra_Notes.pdf',
-        topic: 'Algebra and Geometry',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-05' },
-          { activity: 'Edited an item', date: '2025-01-06' },
-          { activity: 'Renamed an item', date: '2025-01-07' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        course: 'Science',
-        type: "Material",
-        description: 'A course on scientific principles.',
-        objectives: 'To understand basic physics and chemistry.',
-        attachment: 'Science_Lab_Manual.pdf',
-        topic: 'Physics and Chemistry',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-01' },
-          { activity: 'Edited an item', date: '2025-01-02' }
-        ]
-      },
-      {
-        id: 3,
-        name: 'Mark Johnson',
-        course: 'History',
-        type: "Material",
-        description: 'A course on world history.',
-        objectives: 'To learn about major historical events and figures.',
-        attachment: 'World_History.pdf',
-        topic: 'World War II History',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-03' },
-          { activity: 'Added notes', date: '2025-01-04' }
-        ]
-      },
-      {
-        id: 4,
-        name: 'Emily Davis',
-        course: 'Literature',
-        type: "Material",
-        description: 'A course on classical literature.',
-        objectives: 'To read and analyze classic literary works.',
-        attachment: 'Literary_Analysis.pdf',
-        topic: 'Shakespearean Plays',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-08' },
-          { activity: 'Edited an item', date: '2025-01-09' },
-          { activity: 'Renamed an item', date: '2025-01-10' }
-        ]
-      },
-      {
-        id: 5,
-        name: 'James Brown',
-        course: 'Computer Science',
-        type: "Material",
-        description: 'A course on data structures and algorithms.',
-        objectives: 'To learn how to solve problems using algorithms and data structures.',
-        attachment: 'Data_Structures.pdf',
-        topic: 'Data Structures and Algorithms',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-02' },
-          { activity: 'Edited an item', date: '2025-01-04' },
-          { activity: 'Renamed an item', date: '2025-01-06' },
-          { activity: 'Added new content', date: '2025-01-07' },
-        ]
-      }
-    ];
+    const [dataRepo, setDataRepo] = useState([]);
     
-    const combinedData = [...assessments, ...materials];
+    useEffect(() => {
+      const fetchDataRepo = async () => {
+        try {
+          const response = await fetch('http://localhost:5005/api/getDataRepo');
+          if (!response.ok) {
+            throw new Error('Failed to fetch data from the repository');
+          }
+          const data = await response.json();
+          setDataRepo(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
   
-    const totalPages = Math.ceil(combinedData.length / itemsPerPage);
-    const currentData = combinedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+      fetchDataRepo();
+    }, []);
+  
+    // {}
+    // const assessments = [
+    //   {
+    //     "id": 1,
+    //     "name": "John Doe",
+    //     "course": "Mathematics",
+    //     "type": "Assessment",
+    //     "date_of_assessment_created": "2025-01-05",
+    //     "description": "A course on advanced mathematics.",
+    //     "attachment_file": "Algebra_Notes.pdf",
+    //     "objectives": "To improve problem-solving skills.",
+    //     "topic": "Algebra and Geometry",
+    //     "rubric": {
+    //       "overall_points": 50,
+    //       "categories": [
+    //         {
+    //           "rubric_category": "Concept Understanding",
+    //           "points": 20,
+    //           "description": "Assesses the understanding of mathematical concepts and theories."
+    //         },
+    //         {
+    //           "rubric_category": "Problem Solving",
+    //           "points": 15,
+    //           "description": "Evaluates the ability to solve complex mathematical problems."
+    //         },
+    //         {
+    //           "rubric_category": "Application of Theory",
+    //           "points": 15,
+    //           "description": "Assesses the ability to apply mathematical theory to real-world problems."
+    //         }
+    //       ]
+    //     }
+    //   },
+    //   {
+    //     "id": 2,
+    //     "name": "Jane Smith",
+    //     "course": "Science",
+    //     "type": "Assessment",
+    //     "date_of_assessment_created": "2025-01-01",
+    //     "description": "A course on scientific principles.",
+    //     "attachment_file": "Science_Lab_Manual.pdf",
+    //     "objectives": "To understand basic physics and chemistry.",
+    //     "topic": "Physics and Chemistry",
+    //     "rubric": {
+    //       "overall_points": 50,
+    //       "categories": [
+    //         {
+    //           "rubric_category": "Experimentation",
+    //           "points": 20,
+    //           "description": "Assesses the ability to design and conduct scientific experiments."
+    //         },
+    //         {
+    //           "rubric_category": "Analysis",
+    //           "points": 15,
+    //           "description": "Evaluates the analysis of experimental results and drawing conclusions."
+    //         },
+    //         {
+    //           "rubric_category": "Conclusion Accuracy",
+    //           "points": 15,
+    //           "description": "Assesses the accuracy of the conclusions drawn based on the data."
+    //         }
+    //       ]
+    //     }
+    //   },
+    //   {
+    //     "id": 3,
+    //     "name": "Mark Johnson",
+    //     "course": "History",
+    //     "type": "Assessment",
+    //     "date_of_assessment_created": "2025-01-03",
+    //     "description": "A course on world history.",
+    //     "attachment_file": "World_History.pdf",
+    //     "objectives": "To learn about major historical events and figures.",
+    //     "topic": "World War II History",
+    //     "rubric": {
+    //       "overall_points": 50,
+    //       "categories": [
+    //         {
+    //           "rubric_category": "Historical Knowledge",
+    //           "points": 20,
+    //           "description": "Assesses knowledge of historical events, ability to analyze causes and effects, and the ability to consider historical perspectives."
+    //         },
+    //         {
+    //           "rubric_category": "Analysis of Events",
+    //           "points": 15,
+    //           "description": "Evaluates the ability to analyze the causes and consequences of key events in history."
+    //         },
+    //         {
+    //           "rubric_category": "Historical Perspective",
+    //           "points": 15,
+    //           "description": "Assesses the ability to consider historical perspectives and contextualize events within broader historical frameworks."
+    //         },
+    //       ]
+    //     }
+    //   }
+    // ];
+
+    // const materials = [
+    //   {
+    //     id: 1,
+    //     name: 'John Doe',
+    //     course: 'Mathematics',
+    //     type: "Material",
+    //     description: 'A course on advanced mathematics.',
+    //     objectives: 'To improve problem-solving skills.',
+    //     attachment: 'Algebra_Notes.pdf',
+    //     topic: 'Algebra and Geometry',
+    //     activities: [
+    //       { activity: 'Created an item', date: '2025-01-05' },
+    //       { activity: 'Edited an item', date: '2025-01-06' },
+    //       { activity: 'Renamed an item', date: '2025-01-07' }
+    //     ]
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'Jane Smith',
+    //     course: 'Science',
+    //     type: "Material",
+    //     description: 'A course on scientific principles.',
+    //     objectives: 'To understand basic physics and chemistry.',
+    //     attachment: 'Science_Lab_Manual.pdf',
+    //     topic: 'Physics and Chemistry',
+    //     activities: [
+    //       { activity: 'Created an item', date: '2025-01-01' },
+    //       { activity: 'Edited an item', date: '2025-01-02' }
+    //     ]
+    //   },
+    //   {
+    //     id: 3,
+    //     name: 'Mark Johnson',
+    //     course: 'History',
+    //     type: "Material",
+    //     description: 'A course on world history.',
+    //     objectives: 'To learn about major historical events and figures.',
+    //     attachment: 'World_History.pdf',
+    //     topic: 'World War II History',
+    //     activities: [
+    //       { activity: 'Created an item', date: '2025-01-03' },
+    //       { activity: 'Added notes', date: '2025-01-04' }
+    //     ]
+    //   },
+    //   {
+    //     id: 4,
+    //     name: 'Emily Davis',
+    //     course: 'Literature',
+    //     type: "Material",
+    //     description: 'A course on classical literature.',
+    //     objectives: 'To read and analyze classic literary works.',
+    //     attachment: 'Literary_Analysis.pdf',
+    //     topic: 'Shakespearean Plays',
+    //     activities: [
+    //       { activity: 'Created an item', date: '2025-01-08' },
+    //       { activity: 'Edited an item', date: '2025-01-09' },
+    //       { activity: 'Renamed an item', date: '2025-01-10' }
+    //     ]
+    //   },
+    //   {
+    //     id: 5,
+    //     name: 'James Brown',
+    //     course: 'Computer Science',
+    //     type: "Material",
+    //     description: 'A course on data structures and algorithms.',
+    //     objectives: 'To learn how to solve problems using algorithms and data structures.',
+    //     attachment: 'Data_Structures.pdf',
+    //     topic: 'Data Structures and Algorithms',
+    //     activities: [
+    //       { activity: 'Created an item', date: '2025-01-02' },
+    //       { activity: 'Edited an item', date: '2025-01-04' },
+    //       { activity: 'Renamed an item', date: '2025-01-06' },
+    //       { activity: 'Added new content', date: '2025-01-07' },
+    //     ]
+    //   }
+    // ];
+    
+    // const combinedData = [...assessments, ...materials];
+  
+    const totalPages = Math.ceil(dataRepo.length / itemsPerPage);
+    const currentData = dataRepo.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
       const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); 
@@ -275,9 +293,9 @@ return (
         <tbody>
           {currentData.map((item) => (
             <tr key={item.id}>
-              <td className="py-3 px-4 text-gray-600 truncate">{item.course}</td>
+              <td className="py-3 px-4 text-gray-600 truncate">{item.course_name}</td>
               <td className="py-3 px-4 text-gray-600 truncate">{item.topic}</td>
-              <td className="py-3 px-4 text-gray-600 truncate w-1/3 overflow-auto">{item.objectives}</td>
+              <td className="py-3 px-4 text-gray-600 truncate w-1/3 overflow-auto">{item.objective}</td>
               <td className="py-3 px-4 text-gray-600 truncate">{item.type}</td>
               <td className="py-3 px-4 text-gray-600 truncate">
               <button className="svg-save p-0 bg-transparent border-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:brightness-110"
