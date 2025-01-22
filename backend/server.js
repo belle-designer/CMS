@@ -50,37 +50,46 @@ const comparePassword = async (password, hashedPassword) => {
 };
 
 app.post('/api/sendDataToRepo', async (req, res) => {
-  const historyId = req.body.user.id;
-  console.log(historyId);
+  const course = req.body.user.id; // Assuming `req.body.user` contains the course object
+  console.log(course);
+  // First, insert the data into the data_repo table
   db.query(
-    ``,
-    [historyId],
+    `INSERT INTO data_repo (course_name, topic, objective, type) values (?,?,?,?)`,
+    [course.course_name, course.course_topics, course.objectives, course.type],
     (err, result) => {
       if (err) {
-        return res.status(500).json({ error: 'Database error' });
+        return res.status(500).json({ error: 'Database error during insert' });
       }
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'No user found with the given ID' });
-      }
-      res.status(200).json({result});
-      console.log(result);
-    }
-  );
-  db.query(
-    `SELECT * FROM course_history where course_id = ?`,
-    [historyId],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: 'Database error' });
-      }
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'No user found with the given ID' });
-      }
-      res.status(200).json({result});
-      console.log(result);
+
+      // If insertion is successful, proceed with deletion
+      db.query(
+        `DELETE FROM course_history WHERE course_id = ?`,
+        [course.id],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ error: 'Error deleting dependent rows', details: err });
+          }
+      
+          // Then, delete the parent row from courses
+          db.query(
+            `DELETE FROM courses WHERE id = ?`,
+            [course.id],
+            (err, deleteResult) => {
+              if (err) {
+                return res.status(500).json({ error: 'Error deleting course', details: err });
+              }
+              res.status(200).json({
+                message: 'Course and dependent data deleted successfully',
+                deleteResult: deleteResult,
+              });
+            }
+          );
+        }
+      );
     }
   );
 });
+
 
 app.post('/api/getHistory', async (req, res) => {
   const historyId = req.body.user.id;

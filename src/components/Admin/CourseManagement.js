@@ -166,6 +166,37 @@ return formattedDate;
 
   const openApproveModal = (course) => {
     console.log(course);
+    const sendDataToRepo = async () => {
+      // Assuming the user object with an ID is available
+      // const userId = "user123"; // Replace this with the actual user ID
+    
+      const payload = {
+        user: {
+          id: course,
+        },
+      };
+    
+      try {
+        const response = await fetch("http://localhost:5005/api/sendDataToRepo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",  // Specify that the request body is in JSON format
+          },
+          body: JSON.stringify(payload),  // Convert the payload to JSON
+        });
+    
+        if (response.ok) {
+          const result = await response.json();  // Parse the JSON response from the server
+          console.log("Course History:", result);
+        } else {
+          const errorData = await response.json();  // If error, parse the error response
+          console.error("Error:", errorData);
+        }
+      } catch (error) {
+        console.error("Error sending data to repository:", error);
+      }
+    };
+    sendDataToRepo();
     // setSelectedCourse(course);
     // setIsModalOpen(true); 
   };
