@@ -174,6 +174,19 @@ app.post('/api/getHistory', async (req, res) => {
   );
 });
 
+app.get('/api/getAssesments', (req, res) => {
+
+  const query = `SELECT * FROM assesments`;  // Use ?? to safely insert table name to prevent SQL injection
+
+  // Query the database
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error', details: err });
+    }
+    res.status(200).json(result); // Send the result as a JSON response
+  });
+});
+
 app.get('/api/getCourses', async (req, res) => {
   try {
     db.query('SELECT * FROM courses', (err, result) => {

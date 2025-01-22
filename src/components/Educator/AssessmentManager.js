@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function AssessmentManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,6 +130,23 @@ function AssessmentManager() {
   const totalPages = Math.ceil(users.length / itemsPerPage);
   const currentData = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  const [assesments, setAssessments] = useState([]);
+  useEffect(() => {
+    // Fetch the assessments from the backend API
+    const fetchAssessments = async () => {
+      try {
+        const response = await fetch('http://localhost:5005/api/getAssesments');
+        if (!response.ok) {
+          throw new Error('Failed to fetch assessments');
+        }
+        const data = await response.json();
+        setAssessments(data); // Store the data in state
+      } catch (err) {
+      }
+    };
+
+    fetchAssessments(); // Call the function when the component mounts
+  }, []); // Empty dependency array ensures the effect only runs once
   return (
     <div className="p-6">
       {}
@@ -159,18 +176,26 @@ function AssessmentManager() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="px-4 py-2">Python Basics</td>
-            <td className="px-4 py-2">Variables, Loops, Lists</td>
-            <td className="px-4 py-2">In Progress</td>
+        {assesments.map((course) => (
+          <tr key={course.id}>
+            <td className="px-4 py-2">{course.assesment_name}</td>
+            <td className="px-4 py-2">{course.assesments_topics}</td>
+            <td className="px-4 py-2">{course.status}</td>
             <td className="px-4 py-2 flex items-center justify-center space-x-4">
-
-              {}
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000" onClick={handleDeleteClick} className="cursor-pointer">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#000000"
+                onClick={() => handleDeleteClick(course.id)} // Pass course id to handleDeleteClick
+                className="cursor-pointer"
+              >
                 <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>
             </td>
           </tr>
+        ))}
         </tbody>
       </table>
 
