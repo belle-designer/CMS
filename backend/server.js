@@ -49,6 +49,39 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
+app.delete('/api/deleteCourseWithHistory/:id', (req, res) => {
+  const courseId = req.params.id;
+
+  // First, delete dependent rows from course_history
+  db.query(
+    `DELETE FROM course_history WHERE course_id = ?`,
+    [courseId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error deleting dependent rows', details: err });
+      }
+
+      // Then, delete the parent row from courses
+      db.query(
+        `DELETE FROM courses WHERE id = ?`,
+        [courseId],
+        (err, deleteResult) => {
+          if (err) {
+            return res.status(500).json({ error: 'Error deleting course', details: err });
+          }
+
+          res.status(200).json({
+            message: 'Course and dependent data deleted successfully',
+            courseHistoryDeleted: result.affectedRows,
+            courseDeleted: deleteResult.affectedRows,
+          });
+        }
+      );
+    }
+  );
+});
+
+
 app.post('/api/sendDataToRepo', async (req, res) => {
   const course = req.body.user.id; // Assuming `req.body.user` contains the course object
   console.log(course);

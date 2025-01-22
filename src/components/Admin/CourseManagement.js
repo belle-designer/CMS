@@ -10,6 +10,7 @@ function CourseManagement() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [users, setUsers] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
@@ -22,13 +23,15 @@ function CourseManagement() {
       })
       .then((data) => {
         setUsers(data);
-        // setLoading(false);
       })
-      // .catch((error) => {
-      //   // setError(error.message);
-      //   // setLoading(false);
-      // });
-  }, []);
+      .catch((error) => {
+        console.error('Error fetching courses:', error);
+      });
+  }, [refresh]); // Include refresh as a dependency
+
+  const refreshCourses = () => {
+    setRefresh((prev) => !prev); // Toggle the refresh state to re-trigger useEffect
+  };
 
   // const [users, setUsers] = useState([
   //   {
@@ -146,8 +149,9 @@ function CourseManagement() {
         console.error('Error fetching history:', err.message);
       }
     };
-  
+    
     fetchHistory();
+
     setIsModalOpen(true);
   };
 
@@ -196,14 +200,52 @@ return formattedDate;
         console.error("Error sending data to repository:", error);
       }
     };
-    sendDataToRepo();
+    const handleSendData = async () => {
+      try {
+        await sendDataToRepo(); // Wait for sendDataToRepo to complete
+        refreshCourses(); // Refresh only after the operation is done
+      } catch (error) {
+        console.error('Error while sending data to repo:', error);
+      }
+    };
+    handleSendData();
     // setSelectedCourse(course);
     // setIsModalOpen(true); 
   };
 
   const openDeclineModal = (course) => {
-    setSelectedCourse(course);
-    setIsDeclineModalOpen(true);
+    const deleteCourseWithHistory = async (courseId) => {
+      try {
+        const response = await fetch(`http://localhost:5005/api/deleteCourseWithHistory/${courseId}`, {
+          method: 'DELETE',
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Deletion Successful:', data);
+        } else {
+          const error = await response.json();
+          console.error('Error:', error);
+        }
+      } catch (err) {
+        console.error('Request failed:', err);
+      }
+    };
+    console.log(course.id);
+    // Usage
+    const handleSendData = async () => {
+      try {
+        await deleteCourseWithHistory(course.id); // Replace 123 with the actual course ID
+        refreshCourses(); // Refresh only after the operation is done
+      } catch (error) {
+        console.error('Error while sending data to repo:', error);
+      }
+    };
+    handleSendData();
+    
+    
+    // setSelectedCourse(course);
+    // setIsDeclineModalOpen(true);
   };
 
   const approveCourse = () => {
