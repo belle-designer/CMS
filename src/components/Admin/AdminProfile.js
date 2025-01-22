@@ -129,8 +129,8 @@ function AdminProfile() {
       </div>
 
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Mikaella Arciaga</h1>
-        <p className="text-gray-600">@mikaellaargacia</p>
+        <h1 className="text-2xl font-bold">Admin Name</h1>
+        <p className="text-gray-600">@admin.com</p>
       </div>
 
       <div className="text-center mt-4">

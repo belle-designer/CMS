@@ -1,187 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function DataRepository() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-  
-    {}
-    const assessments = [
-      {
-        "id": 1,
-        "name": "John Doe",
-        "course": "Mathematics",
-        "type": "Assessment",
-        "date_of_assessment_created": "2025-01-05",
-        "description": "A course on advanced mathematics.",
-        "attachment_file": "Algebra_Notes.pdf",
-        "objectives": "To improve problem-solving skills.",
-        "topic": "Algebra and Geometry",
-        "rubric": {
-          "overall_points": 50,
-          "categories": [
-            {
-              "rubric_category": "Concept Understanding",
-              "points": 20,
-              "description": "Assesses the understanding of mathematical concepts and theories."
-            },
-            {
-              "rubric_category": "Problem Solving",
-              "points": 15,
-              "description": "Evaluates the ability to solve complex mathematical problems."
-            },
-            {
-              "rubric_category": "Application of Theory",
-              "points": 15,
-              "description": "Assesses the ability to apply mathematical theory to real-world problems."
-            }
-          ]
-        }
-      },
-      {
-        "id": 2,
-        "name": "Jane Smith",
-        "course": "Science",
-        "type": "Assessment",
-        "date_of_assessment_created": "2025-01-01",
-        "description": "A course on scientific principles.",
-        "attachment_file": "Science_Lab_Manual.pdf",
-        "objectives": "To understand basic physics and chemistry.",
-        "topic": "Physics and Chemistry",
-        "rubric": {
-          "overall_points": 50,
-          "categories": [
-            {
-              "rubric_category": "Experimentation",
-              "points": 20,
-              "description": "Assesses the ability to design and conduct scientific experiments."
-            },
-            {
-              "rubric_category": "Analysis",
-              "points": 15,
-              "description": "Evaluates the analysis of experimental results and drawing conclusions."
-            },
-            {
-              "rubric_category": "Conclusion Accuracy",
-              "points": 15,
-              "description": "Assesses the accuracy of the conclusions drawn based on the data."
-            }
-          ]
-        }
-      },
-      {
-        "id": 3,
-        "name": "Mark Johnson",
-        "course": "History",
-        "type": "Assessment",
-        "date_of_assessment_created": "2025-01-03",
-        "description": "A course on world history.",
-        "attachment_file": "World_History.pdf",
-        "objectives": "To learn about major historical events and figures.",
-        "topic": "World War II History",
-        "rubric": {
-          "overall_points": 50,
-          "categories": [
-            {
-              "rubric_category": "Historical Knowledge",
-              "points": 20,
-              "description": "Assesses knowledge of historical events, ability to analyze causes and effects, and the ability to consider historical perspectives."
-            },
-            {
-              "rubric_category": "Analysis of Events",
-              "points": 15,
-              "description": "Evaluates the ability to analyze the causes and consequences of key events in history."
-            },
-            {
-              "rubric_category": "Historical Perspective",
-              "points": 15,
-              "description": "Assesses the ability to consider historical perspectives and contextualize events within broader historical frameworks."
-            },
-          ]
-        }
-      }
-    ];
+    const [dataRepo, setDataRepo] = useState([]);
+    const [refresh, setRefresh] = useState('');
 
-    const materials = [
-      {
-        id: 1,
-        name: 'John Doe',
-        course: 'Mathematics',
-        type: "Material",
-        description: 'A course on advanced mathematics.',
-        objectives: 'To improve problem-solving skills.',
-        attachment: 'Algebra_Notes.pdf',
-        topic: 'Algebra and Geometry',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-05' },
-          { activity: 'Edited an item', date: '2025-01-06' },
-          { activity: 'Renamed an item', date: '2025-01-07' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        course: 'Science',
-        type: "Material",
-        description: 'A course on scientific principles.',
-        objectives: 'To understand basic physics and chemistry.',
-        attachment: 'Science_Lab_Manual.pdf',
-        topic: 'Physics and Chemistry',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-01' },
-          { activity: 'Edited an item', date: '2025-01-02' }
-        ]
-      },
-      {
-        id: 3,
-        name: 'Mark Johnson',
-        course: 'History',
-        type: "Material",
-        description: 'A course on world history.',
-        objectives: 'To learn about major historical events and figures.',
-        attachment: 'World_History.pdf',
-        topic: 'World War II History',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-03' },
-          { activity: 'Added notes', date: '2025-01-04' }
-        ]
-      },
-      {
-        id: 4,
-        name: 'Emily Davis',
-        course: 'Literature',
-        type: "Material",
-        description: 'A course on classical literature.',
-        objectives: 'To read and analyze classic literary works.',
-        attachment: 'Literary_Analysis.pdf',
-        topic: 'Shakespearean Plays',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-08' },
-          { activity: 'Edited an item', date: '2025-01-09' },
-          { activity: 'Renamed an item', date: '2025-01-10' }
-        ]
-      },
-      {
-        id: 5,
-        name: 'James Brown',
-        course: 'Computer Science',
-        type: "Material",
-        description: 'A course on data structures and algorithms.',
-        objectives: 'To learn how to solve problems using algorithms and data structures.',
-        attachment: 'Data_Structures.pdf',
-        topic: 'Data Structures and Algorithms',
-        activities: [
-          { activity: 'Created an item', date: '2025-01-02' },
-          { activity: 'Edited an item', date: '2025-01-04' },
-          { activity: 'Renamed an item', date: '2025-01-06' },
-          { activity: 'Added new content', date: '2025-01-07' },
-        ]
-      }
-    ];
-    
-    const combinedData = [...assessments, ...materials];
+    useEffect(() => {
+      const fetchDataRepo = async () => {
+        try {
+          const response = await fetch('http://localhost:5005/api/getDataRepo');
+          if (!response.ok) {
+            throw new Error('Failed to fetch data from the repository');
+          }
+          const data = await response.json();
+          setDataRepo(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
   
-    const totalPages = Math.ceil(combinedData.length / itemsPerPage);
-    const currentData = combinedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+      fetchDataRepo();
+    }, [refresh]);
+
+    const handleRefresh = () => {
+      setRefresh(Date.now()); // Trigger re-fetch with a new unique value
+    };
+  
+  
+    const totalPages = Math.ceil(dataRepo.length / itemsPerPage);
+    const currentData = dataRepo.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
       const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false); 
@@ -221,10 +69,36 @@ function DataRepository() {
       setObjectives(existingObjectives); 
       setAttachment(existingAttachment); 
     };
-    const handleDeleteClick = () => {
-      setConfirmationMessage('Are you sure you want to delete?');
-      setConfirmationAction('delete');
-      setIsConfirmationModalOpen(true); 
+    const handleDeleteClick = (id) => {
+      const deleteDataRepo = async (id) => {
+        try {
+          const response = await fetch(`http://localhost:5005/api/deleteDataRepo/${id}`, {
+            method: 'DELETE',
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to delete repository data');
+          }
+      
+          const result = await response.json();
+          console.log('Delete successful:', result);
+          return result; // Return result for further processing if needed
+        } catch (error) {
+          console.error('Error deleting repository data:', error);
+          throw error; // Re-throw the error for higher-level handling if needed
+        }
+      };
+      const handleDeleteThenRefresh = async () => {
+        await deleteDataRepo(id);
+        handleRefresh();
+      }
+      handleDeleteThenRefresh();
+      
+      
+      // setConfirmationMessage('Are you sure you want to delete?');
+      // setConfirmationAction('delete');
+      // setIsConfirmationModalOpen(true); 
     };
     const handlePageChange = (page) => {
       if (page >= 1 && page <= totalPages) {
@@ -275,19 +149,19 @@ return (
         <tbody>
           {currentData.map((item) => (
             <tr key={item.id}>
-              <td className="py-3 px-4 text-gray-600 truncate">{item.course}</td>
+              <td className="py-3 px-4 text-gray-600 truncate">{item.course_name}</td>
               <td className="py-3 px-4 text-gray-600 truncate">{item.topic}</td>
-              <td className="py-3 px-4 text-gray-600 truncate w-1/3 overflow-auto">{item.objectives}</td>
+              <td className="py-3 px-4 text-gray-600 truncate w-1/3 overflow-auto">{item.objective}</td>
               <td className="py-3 px-4 text-gray-600 truncate">{item.type}</td>
               <td className="py-3 px-4 text-gray-600 truncate">
-              <button className="svg-save p-0 bg-transparent border-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:brightness-110"
+              {/* <button className="svg-save p-0 bg-transparent border-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:brightness-110"
               onClick={handleSaveClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
                   <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
                 </svg>
-              </button>
+              </button> */}
               
-              <button className="svg-delete pl-2 bg-transparent border-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:brightness-110" onClick={() => handleDeleteClick()}>
+              <button className="svg-delete pl-2 bg-transparent border-0 cursor-pointer transform transition-all duration-200 hover:scale-110 hover:brightness-110" onClick={() => handleDeleteClick(item.id)}>
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ff2929">
                 <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
               </svg>

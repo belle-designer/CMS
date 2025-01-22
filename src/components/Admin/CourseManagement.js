@@ -10,10 +10,11 @@ function CourseManagement() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [users, setUsers] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5005/api/getCourseManagement')
+    fetch('http://localhost:5005/api/getCourses')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -22,13 +23,15 @@ function CourseManagement() {
       })
       .then((data) => {
         setUsers(data);
-        // setLoading(false);
       })
-      // .catch((error) => {
-      //   // setError(error.message);
-      //   // setLoading(false);
-      // });
-  }, []);
+      .catch((error) => {
+        console.error('Error fetching courses:', error);
+      });
+  }, [refresh]); // Include refresh as a dependency
+
+  const refreshCourses = () => {
+    setRefresh((prev) => !prev); // Toggle the refresh state to re-trigger useEffect
+  };
 
   // const [users, setUsers] = useState([
   //   {
@@ -134,16 +137,21 @@ function CourseManagement() {
         }
   
         const data = await response.json(); // Assuming data.result contains the array of activities
+        console.log(data.result);
+        
         setSelectedUser((prevUser) => ({
           ...prevUser,
-          activities: data.result || [], // Ensure activities is at least an empty array
+          activities: data.result || [], // Ensure activities is at least an empty 
+          name : user.educator
+          
         }));
       } catch (err) {
         console.error('Error fetching history:', err.message);
       }
     };
-  
+    
     fetchHistory();
+
     setIsModalOpen(true);
   };
 
@@ -161,13 +169,83 @@ return formattedDate;
 
 
   const openApproveModal = (course) => {
-    setSelectedCourse(course);
-    setIsModalOpen(true); 
+    console.log(course);
+    const sendDataToRepo = async () => {
+      // Assuming the user object with an ID is available
+      // const userId = "user123"; // Replace this with the actual user ID
+    
+      const payload = {
+        user: {
+          id: course,
+        },
+      };
+    
+      try {
+        const response = await fetch("http://localhost:5005/api/sendDataToRepo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",  // Specify that the request body is in JSON format
+          },
+          body: JSON.stringify(payload),  // Convert the payload to JSON
+        });
+    
+        if (response.ok) {
+          const result = await response.json();  // Parse the JSON response from the server
+          console.log("Course History:", result);
+        } else {
+          const errorData = await response.json();  // If error, parse the error response
+          console.error("Error:", errorData);
+        }
+      } catch (error) {
+        console.error("Error sending data to repository:", error);
+      }
+    };
+    const handleSendData = async () => {
+      try {
+        await sendDataToRepo(); // Wait for sendDataToRepo to complete
+        refreshCourses(); // Refresh only after the operation is done
+      } catch (error) {
+        console.error('Error while sending data to repo:', error);
+      }
+    };
+    handleSendData();
+    // setSelectedCourse(course);
+    // setIsModalOpen(true); 
   };
 
   const openDeclineModal = (course) => {
-    setSelectedCourse(course);
-    setIsDeclineModalOpen(true);
+    const deleteCourseWithHistory = async (courseId) => {
+      try {
+        const response = await fetch(`http://localhost:5005/api/deleteCourseWithHistory/${courseId}`, {
+          method: 'DELETE',
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Deletion Successful:', data);
+        } else {
+          const error = await response.json();
+          console.error('Error:', error);
+        }
+      } catch (err) {
+        console.error('Request failed:', err);
+      }
+    };
+    console.log(course.id);
+    // Usage
+    const handleSendData = async () => {
+      try {
+        await deleteCourseWithHistory(course.id); // Replace 123 with the actual course ID
+        refreshCourses(); // Refresh only after the operation is done
+      } catch (error) {
+        console.error('Error while sending data to repo:', error);
+      }
+    };
+    handleSendData();
+    
+    
+    // setSelectedCourse(course);
+    // setIsDeclineModalOpen(true);
   };
 
   const approveCourse = () => {
@@ -211,8 +289,8 @@ return formattedDate;
             <tbody>
               {currentData.map((user) => (
                 <tr key={user.id}>
-                  <td className="py-3 px-4 text-gray-600 truncate w-1/4 max-w-xs">{user.educator}</td>
-                  <td className="py-3 px-4 text-gray-600 w-1/4">{user.course}</td>
+                  <td className="py-3 px-4 text-gray-600 truncate w-1/4 max-w-xs">{user.educator_name}</td>
+                  <td className="py-3 px-4 text-gray-600 w-1/4">{user.course_name}</td>
                   <td className="py-3 px-4 text-gray-600 w-1/4">
                     <button onClick={() => openHistoryModal(user)} className="text-blue-500 hover:underline">
                       View History
@@ -256,7 +334,7 @@ return formattedDate;
 {isModalOpen && selectedUser && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
-      <h3 className="text-lg font-semibold mb-4">History for {selectedUser.name}</h3>
+      <h3 className="text-lg font-semibold mb-4">History for {selectedUser.educator_name}</h3>
       <ul className="text-left mb-4">
       {selectedUser.activities && selectedUser.activities.length > 0 ? (
   selectedUser.activities.map((activity, index) => {
@@ -269,7 +347,7 @@ return formattedDate;
 
     return (
       <li key={index} className="text-gray-600">
-        {activity.activity} - {formattedDate}
+        {activity.action} - {formattedDate}
       </li>
     );
   })

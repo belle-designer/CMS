@@ -49,10 +49,117 @@ const comparePassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
-app.post('/api/getHistory', async (req, res) => {
-  const historyId = req.body.user.history_id;
+app.delete('/api/deleteDataRepo/:id', (req, res) => {
+  const repoId = req.params.id;
+  console.log(repoId);
   db.query(
-    `SELECT * FROM history where course_id = ?`,
+    `DELETE FROM data_repo WHERE id = ?`,
+    [repoId],
+    (err, deleteResult) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error deleting Repository', details: err });
+      }
+
+      res.status(200).json({
+        message: 'Repository successfully',
+        DataRepoDeleted: deleteResult.affectedRows,
+      });
+    }
+  );
+})
+
+app.delete('/api/deleteCourseWithHistory/:id', (req, res) => {
+  const courseId = req.params.id;
+  // First, delete dependent rows from course_history
+  db.query(
+    `DELETE FROM course_history WHERE course_id = ?`,
+    [courseId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error deleting dependent rows', details: err });
+      }
+
+      // Then, delete the parent row from courses
+      db.query(
+        `DELETE FROM courses WHERE id = ?`,
+        [courseId],
+        (err, deleteResult) => {
+          if (err) {
+            return res.status(500).json({ error: 'Error deleting course', details: err });
+          }
+
+          res.status(200).json({
+            message: 'Course and dependent data deleted successfully',
+            courseHistoryDeleted: result.affectedRows,
+            courseDeleted: deleteResult.affectedRows,
+          });
+        }
+      );
+    }
+  );
+});
+
+app.get('/api/getDataRepo', async (req, res) => {
+  try {
+    db.query('SELECT * FROM data_repo', (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+app.post('/api/sendDataToRepo', async (req, res) => {
+  const course = req.body.user.id; // Assuming `req.body.user` contains the course object
+  console.log(course);
+  // First, insert the data into the data_repo table
+  db.query(
+    `INSERT INTO data_repo (course_name, topic, objective, type) values (?,?,?,?)`,
+    [course.course_name, course.course_topics, course.objectives, course.type],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error during insert' });
+      }
+
+      // If insertion is successful, proceed with deletion
+      db.query(
+        `DELETE FROM course_history WHERE course_id = ?`,
+        [course.id],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ error: 'Error deleting dependent rows', details: err });
+          }
+      
+          // Then, delete the parent row from courses
+          db.query(
+            `DELETE FROM courses WHERE id = ?`,
+            [course.id],
+            (err, deleteResult) => {
+              if (err) {
+                return res.status(500).json({ error: 'Error deleting course', details: err });
+              }
+              res.status(200).json({
+                message: 'Course and dependent data deleted successfully',
+                deleteResult: deleteResult,
+              });
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
+
+app.post('/api/getHistory', async (req, res) => {
+  const historyId = req.body.user.id;
+  console.log(historyId);
+  db.query(
+    `SELECT * FROM course_history where course_id = ?`,
     [historyId],
     (err, result) => {
       if (err) {
@@ -62,9 +169,88 @@ app.post('/api/getHistory', async (req, res) => {
         return res.status(404).json({ message: 'No user found with the given ID' });
       }
       res.status(200).json({result});
+      console.log(result);
     }
   );
 });
+
+app.get('/api/getAssesments', (req, res) => {
+
+  const query = `SELECT * FROM assesments`;  // Use ?? to safely insert table name to prevent SQL injection
+
+  // Query the database
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error', details: err });
+    }
+    res.status(200).json(result); // Send the result as a JSON response
+  });
+});
+
+app.get('/api/getCourses', async (req, res) => {
+  try {
+    db.query('SELECT * FROM courses', (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+const multer = require('multer');
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage(); // Or use diskStorage for saving files to disk
+const upload = multer({ storage });
+
+// Route to handle form submission
+app.post('/api/addCourses', upload.single('attachment'), async (req, res) => {
+  const { topics, course, description, objectives, educator} = req.body;
+  const attachments = req.file ? req.file.originalname : null; // Use req.file for the uploaded file
+
+  console.log("Form Data:", req.body); // Text fields
+  console.log("Uploaded File:", req.file); // File details
+
+  try {
+    db.query(
+      'INSERT INTO courses (course_name, course_topics, status, educator_name, description, objectives, attachment, type) VALUES (?, ?, "In Progress", ?, ?, ?, ?, "Material")',
+      [course, topics, educator, description, objectives, attachments],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Database error' });
+        }
+        res.status(200).json(result);
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/deleteCourse', async (req, res) => {
+  const { course_name } = req.body; // Get course_name from the body
+  console.log(course_name);
+  try {
+    // Use parameterized query to prevent SQL injection
+    db.query(
+      `DELETE FROM courses WHERE course_name = ?`,
+      [course_name], // This array will prevent SQL injection
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: 'Database error' });
+        }
+        res.status(200).json({ message: 'Course deleted successfully', result });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 app.put('/api/updateUser', async (req, res) => {
   const { name, email, username, password, role, id } = req.body; // Get user ID and new role from the request body
@@ -89,25 +275,41 @@ app.put('/api/updateUser', async (req, res) => {
     }
   );
 });
-const y = async () => {
-  x = await hashPassword('qweqweQWE!');
-  console.log(x);
-}
-y();
-app.post('/api/addUsers', async (req, res) => {
-  const { name, email, username, password, role } = req.body;
-  hashedPass = await hashPassword(password);
-  // Using prepared statements to avoid SQL injection
-  const query = `INSERT INTO users (name, email, username, password, role) VALUES (?, ?, ?, ?, ?)`;
-  // Perform the query with the provided values
-  db.query(query, [name, email, username, hashedPass, role], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: 'Database error' });
-    }
-    // Send the results back to the client if the query is successful
-    res.status(200).json({ message: 'User added successfully', results });
+// const y = async (pass) => {
+//   x = await hashPassword(pass);
+//   return x;
+// }
+
+const queryAsync = (query, params) => {
+  return new Promise((resolve, reject) => {
+    db.query(query, params, (err, results) => {
+      if (err) {
+        reject(err);  // Reject on error
+      } else {
+        resolve(results);  // Resolve with results
+      }
+    });
   });
+};
+
+app.post('/api/addUsers', async (req, res) => {
+  const { user } = req.body;
+  console.log(user.name);
+  const hashedPass = await hashPassword(user.password);
+  
+  const query = `INSERT INTO users (name, email, username, password, role) VALUES (?, ?, ?, ?, ?)`;
+
+  try {
+    // Await the database query inside the try-catch block
+    const results = await queryAsync(query, [user.name, user.email, user.username, hashedPass, user.role]);
+    res.status(200).json({ message: 'User added successfully', results });
+  } catch (err) {
+    // Catch any errors, including those from the query
+    console.error("Database error:", err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
+
 
 app.get('/api/getCourseManagement', (req, res) => {
   const query = 'SELECT * FROM course_management';  // Adjust this query as per your database schema

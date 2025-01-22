@@ -214,10 +214,11 @@ function UserManagement() {
       console.log('User added:', data); // Handle the response data as needed
     } catch (error) {
       console.error('Error adding user:', error);
+      alert("Database Error!");
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       console.log('Form submitted successfully:', formData);
@@ -229,8 +230,10 @@ function UserManagement() {
         password: formData.password,
         role: role,
       };
-      addUser(newUser);
-      setUsers([...users, newUser]);
+      await addUser(newUser);
+      getNumberOfUsers();
+      handleRefresh();
+
   
       handleCancel();
     }
